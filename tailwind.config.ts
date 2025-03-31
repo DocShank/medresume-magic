@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,19 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				medsume: {
+					teal: '#00CED1',
+					tealLight: '#40E0D0',
+					darkGray: '#1A202C',
+					mediumGray: '#4A5568',
+					lightGray: '#F5F5F5',
+					textDark: '#333333',
+					textMedium: '#666666',
+					watermark: '#A0AEC0',
+					navyBlue: '#1A365D',
+					gold: '#D4AF37',
+					darkBlue: '#2B6CB0'
 				}
 			},
 			borderRadius: {
@@ -70,25 +84,44 @@ export default {
 			},
 			keyframes: {
 				'accordion-down': {
-					from: {
-						height: '0'
-					},
-					to: {
-						height: 'var(--radix-accordion-content-height)'
-					}
+					from: { height: '0' },
+					to: { height: 'var(--radix-accordion-content-height)' }
 				},
 				'accordion-up': {
-					from: {
-						height: 'var(--radix-accordion-content-height)'
-					},
-					to: {
-						height: '0'
-					}
+					from: { height: 'var(--radix-accordion-content-height)' },
+					to: { height: '0' }
+				},
+				'fade-in': {
+					'0%': { opacity: '0' },
+					'100%': { opacity: '1' }
+				},
+				'slide-left': {
+					'0%': { transform: 'translateX(0)' },
+					'100%': { transform: 'translateX(-50px)' }
+				},
+				'slide-right': {
+					'0%': { transform: 'translateX(-50px)' },
+					'100%': { transform: 'translateX(0)' }
+				},
+				'fade-out': {
+					'0%': { opacity: '1' },
+					'100%': { opacity: '0' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'fade-in': 'fade-in 0.5s ease-in-out forwards',
+				'slide-left': 'slide-left 0.5s ease-in-out forwards',
+				'slide-right': 'slide-right 0.5s ease-in-out forwards',
+				'fade-out': 'fade-out 0.5s ease-in-out forwards'
+			},
+			fontFamily: {
+				montserrat: ['Montserrat', 'sans-serif'],
+				opensans: ['Open Sans', 'sans-serif'],
+				garamond: ['Garamond', 'serif'],
+				times: ['Times New Roman', 'serif'],
+				arial: ['Arial', 'sans-serif']
 			}
 		}
 	},
