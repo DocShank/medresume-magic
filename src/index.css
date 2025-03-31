@@ -116,3 +116,55 @@ html {
 .dial-item {
   scroll-snap-align: center;
 }
+
+/* Apple-inspired UI elements */
+.glass-panel {
+  @apply backdrop-blur-lg bg-white/80 border border-white/20 rounded-3xl shadow-lg;
+}
+
+.apple-button {
+  @apply px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-full
+         hover:from-blue-600 hover:to-blue-700 transition-all duration-300 
+         shadow-md hover:shadow-lg transform hover:-translate-y-0.5;
+}
+
+.frosted-glass {
+  @apply bg-white/10 backdrop-blur-md border border-white/30 rounded-2xl shadow-xl;
+}
+
+.form-card {
+  @apply bg-white rounded-3xl p-6 shadow-xl border border-gray-100;
+}
+
+.section-header {
+  @apply text-xl font-semibold mb-4 pb-2 border-b border-gray-200;
+}
+
+.preview-shadow {
+  @apply shadow-[0_10px_60px_-15px_rgba(0,0,0,0.1)];
+}
+
+/* Resume templates styles */
+.template-professional {
+  @apply font-times text-slate-800;
+}
+
+.template-modern {
+  @apply font-arial bg-white;
+}
+
+.template-executive {
+  @apply font-garamond text-slate-800;
+}
+
+.heading-professional {
+  @apply text-2xl font-bold border-b-2 border-slate-800 pb-2 mb-4;
+}
+
+.heading-modern {
+  @apply text-xl font-bold text-blue-700 mb-4;
+}
+
+.heading-executive {
+  @apply text-2xl font-bold text-amber-700 border-b border-amber-600 pb-2 mb-4;
+}
