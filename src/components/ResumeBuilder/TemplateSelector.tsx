@@ -24,9 +24,9 @@ const TemplateSelector = () => {
     }
   ];
 
-  // Set default to professional if the current template was modern
+  // Set default to professional if the current template isn't one of the allowed values
   React.useEffect(() => {
-    if (template === 'modern') {
+    if (template !== 'professional' && template !== 'executive') {
       setTemplate('professional');
     }
   }, [template, setTemplate]);
