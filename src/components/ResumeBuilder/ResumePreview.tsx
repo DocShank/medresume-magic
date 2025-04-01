@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Download, Eye, Linkedin } from "lucide-react";
@@ -6,7 +5,7 @@ import { useResume } from './ResumeContext';
 import { formatDate } from './utils';
 import { toast } from "sonner";
 import html2pdf from 'html2pdf.js';
-import QRCode from 'qrcode.react';
+import { QRCodeSVG } from 'qrcode.react';
 
 interface TemplateProps {
   data: any;
@@ -54,11 +53,10 @@ const ProfessionalTemplate: React.FC<TemplateProps> = ({ data }) => {
         {/* QR Code for social media */}
         {data.personalDetails.socialMediaUrl && (
           <div className="absolute top-0 right-0">
-            <QRCode 
+            <QRCodeSVG 
               value={data.personalDetails.socialMediaUrl} 
               size={64} 
               level="H"
-              renderAs="svg"
             />
           </div>
         )}
@@ -229,11 +227,10 @@ const ExecutiveTemplate: React.FC<TemplateProps> = ({ data }) => {
         {data.personalDetails.socialMediaUrl && (
           <div className="absolute top-4 right-2">
             <div className="flex flex-col items-center">
-              <QRCode 
+              <QRCodeSVG 
                 value={data.personalDetails.socialMediaUrl} 
                 size={64} 
                 level="H"
-                renderAs="svg"
                 fgColor="#8A7B52"
                 bgColor="#FFFFFF"
               />
@@ -470,7 +467,7 @@ const ExecutiveTemplate: React.FC<TemplateProps> = ({ data }) => {
       {/* Footer */}
       <div className="text-center mt-10 pt-4 border-t border-medsume-resumeGold/30 text-sm text-medsume-resumeGold flex justify-center items-center gap-2">
         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.428 15.428a2 2 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
         Created with Medsume by Shank
       </div>
