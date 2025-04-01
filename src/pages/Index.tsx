@@ -27,19 +27,17 @@ const Index = () => {
 
   return (
     <div className="min-h-screen w-full overflow-x-hidden">
-      <section id="intro" className="min-h-screen relative">
+      <section id="intro" className="min-h-screen relative pb-16">
         <IntroPage />
-        <div className="absolute bottom-12 left-0 right-0 flex justify-center animate-float">
+        <div className="fixed bottom-6 right-6 z-20 animate-bounce" style={{animationDuration: '3s'}}>
           <a 
             href="#builder" 
-            className="flex flex-col items-center text-medsume-appleBlue hover:text-medsume-appleBlueLight transition-colors"
+            className="flex items-center justify-center w-12 h-12 bg-white rounded-full shadow-apple text-medsume-appleBlue hover:text-medsume-appleBlueLight transition-all duration-300 hover:shadow-lg hover:scale-110"
+            aria-label="Discover Our Resume Builder"
           >
-            <span className="text-sm mb-2 font-medium">Discover Our Resume Builder</span>
-            <div className="bg-white p-2 rounded-full shadow-apple">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-              </svg>
-            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
           </a>
         </div>
       </section>

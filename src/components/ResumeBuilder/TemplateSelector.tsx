@@ -45,7 +45,7 @@ const TemplateSelector = () => {
         {templates.map((t) => (
           <Card 
             key={t.id} 
-            className={`relative cursor-pointer overflow-hidden transition-all duration-300
+            className={`relative cursor-pointer overflow-hidden transition-all duration-500
                       ${template === t.id 
                         ? 'ring-2 ring-medsume-appleBlue bg-gradient-to-br from-medsume-appleBlue/20 to-medsume-teal/10 shadow-lg transform scale-[1.02]' 
                         : 'bg-white/5 backdrop-blur-md hover:bg-white/10 hover:shadow-xl hover:scale-[1.01] transform transition-all border border-white/10'}`}
