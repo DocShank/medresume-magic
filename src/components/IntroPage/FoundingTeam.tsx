@@ -1,59 +1,62 @@
 
 import React from 'react';
 
-// Placeholder function for images (when real images are uploaded)
-const getImageUrl = (name: string) => {
-  return `https://via.placeholder.com/80?text=${name.charAt(0)}`;
-};
-
 const FoundingTeam = () => {
   const teamMembers = [
     {
       name: "Shashank Neupane",
       designation: "MBBS - Creator & Lead Developer",
-      image: "Shashank.jpg"
+      image: "/lovable-uploads/a67a7314-a411-4a3b-9aff-1f8451d09fde.png"
     },
     {
       name: "Prasamsa Pudasaini",
       designation: "MBBS - Product Design & Quality Lead",
-      image: "Prasamsa.jpg"
+      image: "/lovable-uploads/34b4fc55-03e5-4ead-8e34-7c0961e476a3.png"
     },
     {
       name: "Aashriya Neupane",
       designation: "BBA-Finance - Template & Operations Manager",
-      image: "Aashriya.jpg"
+      image: "/lovable-uploads/30ab6e7d-04c5-4872-b185-b0479554a100.png"
     }
   ];
 
   return (
-    <div className="flex flex-col items-center">
-      <h2 className="text-xl font-bold text-medsume-textDark mb-6">Meet Our Founding Team</h2>
+    <div className="flex flex-col items-center backdrop-blur-sm bg-white/50 p-8 rounded-2xl shadow-apple">
+      <h2 className="text-2xl font-bold text-medsume-textDark mb-8 font-sfpro">Meet Our Founding Team</h2>
       
-      <div className="flex flex-wrap justify-center gap-8">
+      <div className="flex flex-wrap justify-center gap-12">
         {teamMembers.map((member, index) => (
-          <div key={index} className="flex flex-col items-center">
-            <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-gray-300 bg-white">
+          <div key={index} className="flex flex-col items-center transition-transform hover:scale-105 duration-300">
+            <div className="w-32 h-32 md:w-40 md:h-40 rounded-xl overflow-hidden border-2 border-white shadow-apple bg-gradient-to-br from-white to-gray-100">
               <img 
-                src={getImageUrl(member.name)} 
+                src={member.image} 
                 alt={member.name} 
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain"
               />
             </div>
-            <h3 className="mt-2 text-sm font-bold text-medsume-textDark text-center">{member.name}</h3>
-            <p className="text-xs text-medsume-textMedium text-center">{member.designation}</p>
+            <h3 className="mt-4 text-base md:text-lg font-bold text-medsume-textDark text-center font-sfpro">{member.name}</h3>
+            <p className="text-sm text-medsume-textMedium text-center">{member.designation}</p>
           </div>
         ))}
       </div>
       
-      <div className="mt-6 flex items-center">
-        <a href="https://creative-cubicle-portal.lovable.app/" target="_blank" rel="noopener noreferrer" className="flex items-center">
-          <span className="text-sm text-medsume-textDark">Creative Cubicle Nepal Medicos</span>
+      <div className="mt-12 flex flex-col items-center">
+        <p className="text-lg font-medium text-medsume-textDark mb-4">Creative Cubicle Nepal Medicos</p>
+        <a 
+          href="https://creative-cubicle-portal.lovable.app/" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          className="flex items-center justify-center transition-transform hover:scale-105 duration-300 w-full"
+        >
           <img 
-            src="https://via.placeholder.com/28x28?text=CC" 
+            src="/lovable-uploads/70749cd8-8731-40f1-a68d-a8ffcaced06f.png"
             alt="Creative Cubicle Logo" 
-            className="ml-2 h-7"
+            className="h-28 object-contain"
           />
         </a>
+        <p className="mt-4 text-sm text-medsume-textMedium max-w-md text-center">
+          Prevention is the cure, stay healthy for sure
+        </p>
       </div>
     </div>
   );
