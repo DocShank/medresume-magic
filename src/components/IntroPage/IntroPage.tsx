@@ -10,7 +10,7 @@ const IntroPage = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setAnimationComplete(true);
-    }, 2500); // Animation completes after 2.5 seconds - faster
+    }, 2000); // Animation completes after 2 seconds - faster
 
     return () => clearTimeout(timer);
   }, []);

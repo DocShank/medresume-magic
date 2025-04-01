@@ -72,29 +72,36 @@ export const languageOptions = [
 ];
 
 export const idTypeOptions = [
-  'NMC', // Nepal Medical Council
-  'GMC', // General Medical Council (UK)
-  'USMLE', // United States Medical Licensing Examination
-  'MCI', // Medical Council of India
-  'AMC', // Australian Medical Council
-  'HPCSA', // Health Professions Council of South Africa
-  'PMDC', // Pakistan Medical and Dental Council
-  'SMC', // Singapore Medical Council
-  'BMDC', // Bangladesh Medical and Dental Council
-  'SLMC', // Sri Lanka Medical Council
-  'MMC', // Malaysian Medical Council
-  'SCFHS', // Saudi Commission for Health Specialties
-  'DHA', // Dubai Health Authority
-  'HAAD', // Health Authority Abu Dhabi
-  'QCHP', // Qatar Council for Healthcare Practitioners
-  'OMSB', // Oman Medical Specialty Board
-  'MBBS', // Bachelor of Medicine, Bachelor of Surgery
-  'MD', // Doctor of Medicine
-  'DO', // Doctor of Osteopathic Medicine
-  'FMGE', // Foreign Medical Graduate Examination (India)
-  'PLAB', // Professional and Linguistic Assessments Board (UK)
-  'NPI', // National Provider Identifier (US)
-  'Other'
+  { value: 'NMC', label: 'Nepal Medical Council (Nepal)', description: 'Official medical registration body in Nepal' },
+  { value: 'GMC', label: 'General Medical Council (UK)', description: 'Regulatory body for doctors in the United Kingdom' },
+  { value: 'USMLE', label: 'United States Medical Licensing Examination (USA)', description: 'Three-step examination for medical licensure in the United States' },
+  { value: 'MCI', label: 'Medical Council of India (India)', description: 'Statutory body regulating medical education and practitioners in India' },
+  { value: 'PMDC', label: 'Pakistan Medical & Dental Council (Pakistan)', description: 'Statutory regulatory authority in Pakistan' },
+  { value: 'AMC', label: 'Australian Medical Council (Australia)', description: 'National assessment body for international medical graduates' },
+  { value: 'HPCSA', label: 'Health Professions Council of South Africa (South Africa)', description: 'Statutory body for healthcare professionals' },
+  { value: 'SMC', label: 'Singapore Medical Council (Singapore)', description: 'Regulatory body for registered medical practitioners' },
+  { value: 'BMDC', label: 'Bangladesh Medical & Dental Council (Bangladesh)', description: 'Registration authority for physicians in Bangladesh' },
+  { value: 'SLMC', label: 'Sri Lanka Medical Council (Sri Lanka)', description: 'Statutory body for medical registration in Sri Lanka' },
+  { value: 'MMC', label: 'Malaysian Medical Council (Malaysia)', description: 'Regulatory body for medical practitioners in Malaysia' },
+  { value: 'SCFHS', label: 'Saudi Commission for Health Specialties (Saudi Arabia)', description: 'Regulatory body for health specialists in Saudi Arabia' },
+  { value: 'DHA', label: 'Dubai Health Authority (UAE)', description: 'Regulatory body for healthcare sector in Dubai' },
+  { value: 'HAAD', label: 'Health Authority Abu Dhabi (UAE)', description: 'Regulatory body for healthcare sector in Abu Dhabi' },
+  { value: 'QCHP', label: 'Qatar Council for Healthcare Practitioners (Qatar)', description: 'National regulator of healthcare practitioners' },
+  { value: 'OMSB', label: 'Oman Medical Specialty Board (Oman)', description: 'Regulatory body for medical specialties in Oman' },
+  { value: 'MBBS', label: 'Bachelor of Medicine, Bachelor of Surgery (International)', description: 'Primary medical degree in many countries' },
+  { value: 'MD', label: 'Doctor of Medicine (International)', description: 'Higher doctoral degree in medicine' },
+  { value: 'DO', label: 'Doctor of Osteopathic Medicine (USA)', description: 'Professional doctoral degree for physicians in the US' },
+  { value: 'FMGE', label: 'Foreign Medical Graduate Examination (India)', description: 'Screening test for foreign medical graduates' },
+  { value: 'PLAB', label: 'Professional and Linguistic Assessments Board (UK)', description: 'Test for doctors who qualified abroad' },
+  { value: 'NPI', label: 'National Provider Identifier (USA)', description: 'Unique identification number for healthcare providers' },
+  { value: 'AHPRA', label: 'Australian Health Practitioner Regulation Agency (Australia)', description: 'National regulatory body for health practitioners' },
+  { value: 'JMDC', label: 'Jordan Medical Doctor Council (Jordan)', description: 'Regulatory body for physicians in Jordan' },
+  { value: 'MCCEE', label: 'Medical Council of Canada Evaluating Examination (Canada)', description: 'Assessment for international medical graduates' },
+  { value: 'NMBI', label: 'Nursing and Midwifery Board of Ireland (Ireland)', description: 'Regulatory body for nurses and midwives' },
+  { value: 'NMC-UK', label: 'Nursing and Midwifery Council (UK)', description: 'Regulatory body for nurses and midwives in the UK' },
+  { value: 'NZMC', label: 'New Zealand Medical Council (New Zealand)', description: 'Regulatory authority for doctors' },
+  { value: 'ECFMG', label: 'Educational Commission for Foreign Medical Graduates (USA)', description: 'Certification for international medical graduates' },
+  { value: 'Other', label: 'Other Identification Type', description: 'Any other form of professional identification' }
 ];
 
 export const degreeOptions = [
@@ -137,4 +144,32 @@ export const convertDateFormat = (dateString: string, format: 'MM/DD/YYYY' | 'DD
   } catch (error) {
     return dateString;
   }
+};
+
+export const validateUrl = (url: string) => {
+  try {
+    new URL(url);
+    return true;
+  } catch (err) {
+    return false;
+  }
+};
+
+export const standardizeAddress = (address: string) => {
+  // Simple function to try to format addresses in a standard way
+  return address.trim();
+};
+
+export const getPlaceholderByField = (fieldName: string) => {
+  const placeholders: Record<string, string> = {
+    firstName: "John",
+    middleName: "Alexander",
+    lastName: "Smith",
+    organization: "Mayo Clinic",
+    email: "john.smith@example.com",
+    mailingAddress: "123 Medical Center Dr, City, State, 12345, Country",
+    phoneNumber: "+1 234 567 8900"
+  };
+  
+  return placeholders[fieldName] || fieldName;
 };

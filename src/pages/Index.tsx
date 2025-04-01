@@ -8,6 +8,7 @@ const Index = () => {
   useEffect(() => {
     // Add class to improve scroll behavior
     document.documentElement.classList.add('smooth-scroll');
+    document.documentElement.style.scrollBehavior = 'smooth';
     
     // Handle hash navigation on load
     if (window.location.hash) {
@@ -22,6 +23,7 @@ const Index = () => {
     
     return () => {
       document.documentElement.classList.remove('smooth-scroll');
+      document.documentElement.style.scrollBehavior = 'auto';
     };
   }, []);
 
@@ -29,7 +31,7 @@ const Index = () => {
     <div className="min-h-screen w-full overflow-x-hidden">
       <section id="intro" className="min-h-screen relative pb-24">
         <IntroPage />
-        <div className="fixed bottom-8 right-8 z-20 animate-bounce" style={{animationDuration: '3s'}}>
+        <div className="fixed bottom-8 right-8 z-20 animate-bounce" style={{animationDuration: '2s'}}>
           <a 
             href="#builder" 
             className="flex items-center justify-center w-14 h-14 bg-white rounded-full shadow-apple text-medsume-appleBlue hover:text-medsume-appleBlueLight transition-all duration-300 hover:shadow-lg hover:scale-110"

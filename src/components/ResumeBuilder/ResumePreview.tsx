@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Download, Eye, Linkedin } from "lucide-react";
@@ -478,11 +479,6 @@ const ExecutiveTemplate: React.FC<TemplateProps> = ({ data }) => {
 const ResumePreview = () => {
   const { template, resumeData } = useResume();
   
-  // If template is 'modern', switch to 'professional'
-  useEffect(() => {
-    // No need to implement this as we've already handled it in TemplateSelector
-  }, [template]);
-  
   const handleDownloadPDF = () => {
     const element = document.getElementById('resume-preview');
     if (!element) return;
@@ -532,7 +528,6 @@ const ResumePreview = () => {
         >
           {template === 'professional' && <ProfessionalTemplate data={resumeData} />}
           {template === 'executive' && <ExecutiveTemplate data={resumeData} />}
-          {template === 'modern' && <ProfessionalTemplate data={resumeData} />} {/* Fallback */}
         </div>
       </div>
     </div>

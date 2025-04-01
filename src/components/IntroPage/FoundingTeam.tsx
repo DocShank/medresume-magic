@@ -8,14 +8,14 @@ const teamMembers = [
     image: "/lovable-uploads/3f161cb9-78bb-4954-b747-6004ff80385b.png"
   },
   {
-    name: "Prasamsa, MBBS",
+    name: "Prasamsa Pudasaini, MBBS",
     designation: "Product Design & Quality Lead",
-    image: "/lovable-uploads/34b4fc55-03e5-4ead-8e34-7c0961e476a3.png" // Swapped image
+    image: "/lovable-uploads/d6a53a16-1e5e-4b10-a947-91254d354f2c.png"
   },
   {
     name: "Aashriya Neupane, BBA Finance",
     designation: "Template & Operations Manager",
-    image: "/lovable-uploads/d6a53a16-1e5e-4b10-a947-91254d354f2c.png" // Swapped image
+    image: "/lovable-uploads/34b4fc55-03e5-4ead-8e34-7c0961e476a3.png"
   }
 ];
 

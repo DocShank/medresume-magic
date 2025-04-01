@@ -1,6 +1,7 @@
+
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-export type Template = 'professional' | 'modern' | 'executive';
+export type Template = 'professional' | 'executive';
 
 export type Education = {
   id: string;
@@ -47,6 +48,7 @@ export type Membership = {
   name: string;
   issueDate: string;
   expiryDate?: string;
+  issuedBy?: string;
   remarks: string;
 };
 
@@ -71,6 +73,7 @@ export type PersonalDetails = {
   countryCode?: string;
   phoneNumber?: string;
   email?: string;
+  socialMediaUrl?: string;
 };
 
 export type ResumeData = {
@@ -121,6 +124,7 @@ const defaultResumeData: ResumeData = {
     firstName: '',
     lastName: '',
     hasAccreditedId: false,
+    socialMediaUrl: '',
   },
   medicalEducation: [],
   otherEducation: [],
