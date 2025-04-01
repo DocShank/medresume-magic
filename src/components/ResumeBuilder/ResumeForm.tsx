@@ -43,6 +43,21 @@ import {
 
 const proficiencyOptions = ['Native', 'Fluent', 'Intermediate', 'Basic'];
 
+const extendedIdTypeOptions = [
+  "NMC", // Nepal Medical Council
+  "GMC", // General Medical Council (UK)
+  "USMLE", // United States Medical Licensing Examination
+  "MCI", // Medical Council of India
+  "AMC", // Australian Medical Council
+  "HPCSA", // Health Professions Council of South Africa
+  "PMDC", // Pakistan Medical and Dental Council
+  "SMC", // Singapore Medical Council
+  "BMDC", // Bangladesh Medical and Dental Council
+  "SLMC", // Sri Lanka Medical Council
+  "MMC", // Malaysian Medical Council
+  "Other"
+];
+
 const ResumeForm = () => {
   const { 
     resumeData, 
@@ -89,9 +104,7 @@ const ResumeForm = () => {
     }
   };
   
-  // Unified date input handler for simpler date selection
   const handleDateChange = (fieldType: string, id: string, field: string, value: string) => {
-    // For various record types, update the appropriate data
     if (fieldType === 'medical-education') {
       updateMedicalEducation(id, { [field]: value });
     } else if (fieldType === 'other-education') {
@@ -115,6 +128,8 @@ const ResumeForm = () => {
       degree: '',
       startDate: '',
       endDate: '',
+      graduationYear: '',
+      score: '',
       remarks: ''
     };
     
@@ -227,7 +242,6 @@ const ResumeForm = () => {
     }
   };
   
-  // Render the Education section combining medical and other education
   const renderEducationSection = () => {
     return (
       <AccordionItem value="education" className="border border-white/10 rounded-xl overflow-hidden bg-white/5 backdrop-blur-sm">
@@ -240,7 +254,6 @@ const ResumeForm = () => {
           </div>
         </AccordionTrigger>
         <AccordionContent className="px-4 pb-6">
-          {/* Medical Education */}
           <div className="mb-8">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-medsume-appleBlue font-medium">Medical Education</h3>
@@ -349,6 +362,27 @@ const ResumeForm = () => {
                       </div>
                     </div>
                   </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-white/80">Graduation Year</label>
+                      <Input 
+                        value={edu.graduationYear}
+                        onChange={(e) => updateMedicalEducation(edu.id, { graduationYear: e.target.value })}
+                        className="bg-white/10 border-white/20 text-white focus:border-medsume-teal"
+                        placeholder="Year of graduation"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-white/80">Score</label>
+                      <Input 
+                        value={edu.score}
+                        onChange={(e) => updateMedicalEducation(edu.id, { score: e.target.value })}
+                        className="bg-white/10 border-white/20 text-white focus:border-medsume-teal"
+                        placeholder="Score"
+                      />
+                    </div>
+                  </div>
                 </div>
               ))}
               
@@ -369,7 +403,6 @@ const ResumeForm = () => {
             </div>
           </div>
           
-          {/* Other Education */}
           <div>
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-medsume-appleBlue font-medium">Additional Education</h3>
@@ -493,7 +526,6 @@ const ResumeForm = () => {
     );
   };
   
-  // Render hobby selection with improved UI
   const renderHobbiesSection = () => {
     return (
       <AccordionItem value="hobbies" className="border border-white/10 rounded-xl overflow-hidden bg-white/5 backdrop-blur-sm">
@@ -577,7 +609,6 @@ const ResumeForm = () => {
     );
   };
   
-  // Render enhanced language selection
   const renderLanguagesSection = () => {
     return (
       <AccordionItem value="languages" className="border border-white/10 rounded-xl overflow-hidden bg-white/5 backdrop-blur-sm">
@@ -701,7 +732,6 @@ const ResumeForm = () => {
   return (
     <div className="bg-white/5 backdrop-blur-lg p-6 rounded-xl shadow-inner overflow-y-auto max-h-[800px] border border-white/10">
       <Accordion type="single" collapsible defaultValue="personal" className="space-y-4">
-        {/* Personal Details Section */}
         <AccordionItem value="personal" className="border border-white/10 rounded-xl overflow-hidden bg-white/5 backdrop-blur-sm">
           <AccordionTrigger className="hover:bg-white/5 px-4 py-3 rounded-t-xl">
             <div className="flex items-center">
@@ -713,7 +743,6 @@ const ResumeForm = () => {
           </AccordionTrigger>
           <AccordionContent className="px-4 pb-6">
             <div className="space-y-6">
-              {/* Photo Upload */}
               <div className="flex justify-center mb-6">
                 <div className="relative">
                   <div className="w-36 h-36 rounded-xl overflow-hidden border-2 border-white/20 bg-gradient-to-br from-white/5 to-black/10 flex items-center justify-center shadow-inner">
@@ -744,7 +773,6 @@ const ResumeForm = () => {
                 </div>
               </div>
               
-              {/* Name Fields */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-2 text-white">First Name*</label>
@@ -775,7 +803,6 @@ const ResumeForm = () => {
                 </div>
               </div>
               
-              {/* Organization */}
               <div>
                 <label className="block text-sm font-medium mb-2 text-white">Organization</label>
                 <Input 
@@ -786,7 +813,6 @@ const ResumeForm = () => {
                 />
               </div>
               
-              {/* ID Type & Number */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-2 text-white">ID Type</label>
@@ -798,7 +824,7 @@ const ResumeForm = () => {
                       <SelectValue placeholder="Select ID type" />
                     </SelectTrigger>
                     <SelectContent className="bg-slate-800 border-white/10 text-white max-h-60">
-                      {idTypeOptions.map(type => (
+                      {extendedIdTypeOptions.map(type => (
                         <SelectItem key={type} value={type} className="focus:bg-medsume-teal/20 focus:text-white">
                           {type}
                         </SelectItem>
@@ -818,7 +844,6 @@ const ResumeForm = () => {
                 </div>
               </div>
               
-              {/* Contact Information */}
               <div>
                 <label className="block text-sm font-medium mb-2 text-white">Mailing Address</label>
                 <Textarea 
@@ -855,10 +880,8 @@ const ResumeForm = () => {
           </AccordionContent>
         </AccordionItem>
         
-        {/* Education Section - Combined */}
         {renderEducationSection()}
         
-        {/* Experience Section */}
         <AccordionItem value="experience" className="border border-white/10 rounded-xl overflow-hidden bg-white/5 backdrop-blur-sm">
           <AccordionTrigger className="hover:bg-white/5 px-4 py-3 rounded-t-xl">
             <div className="flex items-center">
@@ -1008,7 +1031,6 @@ const ResumeForm = () => {
           </AccordionContent>
         </AccordionItem>
         
-        {/* Awards Section */}
         <AccordionItem value="awards" className="border border-white/10 rounded-xl overflow-hidden bg-white/5 backdrop-blur-sm">
           <AccordionTrigger className="hover:bg-white/5 px-4 py-3 rounded-t-xl">
             <div className="flex items-center">
@@ -1114,7 +1136,6 @@ const ResumeForm = () => {
           </AccordionContent>
         </AccordionItem>
         
-        {/* Publications Section */}
         <AccordionItem value="publications" className="border border-white/10 rounded-xl overflow-hidden bg-white/5 backdrop-blur-sm">
           <AccordionTrigger className="hover:bg-white/5 px-4 py-3 rounded-t-xl">
             <div className="flex items-center">
@@ -1280,7 +1301,6 @@ const ResumeForm = () => {
           </AccordionContent>
         </AccordionItem>
         
-        {/* Memberships Section */}
         <AccordionItem value="memberships" className="border border-white/10 rounded-xl overflow-hidden bg-white/5 backdrop-blur-sm">
           <AccordionTrigger className="hover:bg-white/5 px-4 py-3 rounded-t-xl">
             <div className="flex items-center">
@@ -1393,10 +1413,8 @@ const ResumeForm = () => {
           </AccordionContent>
         </AccordionItem>
         
-        {/* Languages Section */}
         {renderLanguagesSection()}
         
-        {/* Hobbies Section */}
         {renderHobbiesSection()}
       </Accordion>
     </div>
