@@ -1,11 +1,12 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { Download, Eye } from "lucide-react";
+import { Download, Eye, Linkedin } from "lucide-react";
 import { useResume } from './ResumeContext';
 import { formatDate } from './utils';
 import { toast } from "sonner";
 import html2pdf from 'html2pdf.js';
+import QRCode from 'qrcode.react';
 
 interface TemplateProps {
   data: any;
@@ -14,8 +15,8 @@ interface TemplateProps {
 const ProfessionalTemplate: React.FC<TemplateProps> = ({ data }) => {
   return (
     <div className="font-times text-slate-800 px-8 py-6">
-      {/* Header - Premium style */}
-      <div className="text-center mb-8 pb-4 border-b-2 border-slate-300">
+      {/* Header - Enhanced Premium style */}
+      <div className="text-center mb-8 pb-4 border-b-2 border-slate-300 relative">
         <h1 className="text-3xl font-bold tracking-tight mb-1">
           {data.personalDetails.firstName} {data.personalDetails.middleName} {data.personalDetails.lastName}
         </h1>
@@ -36,7 +37,6 @@ const ProfessionalTemplate: React.FC<TemplateProps> = ({ data }) => {
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
               </svg>
-              {data.personalDetails.countryCode && `${data.personalDetails.countryCode} `}
               {data.personalDetails.phoneNumber}
             </span>
           )}
@@ -50,12 +50,24 @@ const ProfessionalTemplate: React.FC<TemplateProps> = ({ data }) => {
             {data.personalDetails.mailingAddress}
           </p>
         )}
+        
+        {/* QR Code for social media */}
+        {data.personalDetails.socialMediaUrl && (
+          <div className="absolute top-0 right-0">
+            <QRCode 
+              value={data.personalDetails.socialMediaUrl} 
+              size={64} 
+              level="H"
+              renderAs="svg"
+            />
+          </div>
+        )}
       </div>
       
       {/* Education */}
       {(data.medicalEducation.length > 0 || data.otherEducation.length > 0) && (
         <div className="mb-6">
-          <h2 className="heading-professional">Education</h2>
+          <h2 className="text-xl font-bold border-b border-slate-300 pb-2 mb-4 text-slate-700">Education</h2>
           
           {data.medicalEducation.map((edu: any) => (
             <div key={edu.id} className="mb-4">
@@ -88,7 +100,7 @@ const ProfessionalTemplate: React.FC<TemplateProps> = ({ data }) => {
       {/* Experience */}
       {data.experiences.length > 0 && (
         <div className="mb-6">
-          <h2 className="heading-professional">Experience</h2>
+          <h2 className="text-xl font-bold border-b border-slate-300 pb-2 mb-4 text-slate-700">Experience</h2>
           
           {data.experiences.map((exp: any) => (
             <div key={exp.id} className="mb-4">
@@ -98,7 +110,9 @@ const ProfessionalTemplate: React.FC<TemplateProps> = ({ data }) => {
                   {exp.startDate && formatDate(exp.startDate)} - {exp.endDate ? formatDate(exp.endDate) : "Present"}
                 </span>
               </div>
-              <p className="text-md mb-1">{exp.department}, {exp.institution}</p>
+              <p className="text-md mb-1">
+                {exp.department ? `${exp.department}, ${exp.institution}` : exp.institution}
+              </p>
               <p className="text-sm text-slate-700">{exp.description}</p>
             </div>
           ))}
@@ -108,14 +122,14 @@ const ProfessionalTemplate: React.FC<TemplateProps> = ({ data }) => {
       {/* Publications */}
       {((data.publications && data.publications.length > 0) || data.publicationsText) && (
         <div className="mb-6">
-          <h2 className="heading-professional">Publications</h2>
+          <h2 className="text-xl font-bold border-b border-slate-300 pb-2 mb-4 text-slate-700">Publications</h2>
           
           {data.publicationsText ? (
             <div className="whitespace-pre-line text-slate-700">{data.publicationsText}</div>
           ) : (
             <div className="space-y-3">
               {data.publications.map((pub: any, index: number) => (
-                <div key={pub.id} className="text-sm text-slate-700">
+                <div key={pub.id} className="text-sm text-slate-700 p-2 bg-slate-50 rounded-md">
                   {pub.authors}. <span className="italic">{pub.title}</span>. {pub.journal}. {pub.date && formatDate(pub.date)}.
                   {pub.doi && <span> DOI: {pub.doi}</span>}
                 </div>
@@ -128,7 +142,7 @@ const ProfessionalTemplate: React.FC<TemplateProps> = ({ data }) => {
       {/* Awards */}
       {data.awards.length > 0 && (
         <div className="mb-6">
-          <h2 className="heading-professional">Honors & Awards</h2>
+          <h2 className="text-xl font-bold border-b border-slate-300 pb-2 mb-4 text-slate-700">Honors & Awards</h2>
           
           {data.awards.map((award: any) => (
             <div key={award.id} className="mb-4">
@@ -146,11 +160,12 @@ const ProfessionalTemplate: React.FC<TemplateProps> = ({ data }) => {
       {/* Memberships */}
       {data.memberships.length > 0 && (
         <div className="mb-6">
-          <h2 className="heading-professional">Professional Memberships</h2>
+          <h2 className="text-xl font-bold border-b border-slate-300 pb-2 mb-4 text-slate-700">Professional Memberships</h2>
           
           {data.memberships.map((membership: any) => (
             <div key={membership.id} className="mb-3">
               <span className="font-bold">{membership.name}</span>
+              {membership.issuedBy && <span className="text-sm text-slate-600 ml-2">Issued by: {membership.issuedBy}</span>}
               <span className="text-sm text-slate-600 ml-2">
                 {membership.issueDate && formatDate(membership.issueDate)}
                 {membership.expiryDate && ` - ${formatDate(membership.expiryDate)}`}
@@ -166,7 +181,7 @@ const ProfessionalTemplate: React.FC<TemplateProps> = ({ data }) => {
         {/* Languages */}
         {data.languages.length > 0 && (
           <div className="mb-6">
-            <h2 className="heading-professional">Languages</h2>
+            <h2 className="text-xl font-bold border-b border-slate-300 pb-2 mb-4 text-slate-700">Languages</h2>
             
             <div className="space-y-2">
               {data.languages.map((language: any, index: number) => (
@@ -182,7 +197,7 @@ const ProfessionalTemplate: React.FC<TemplateProps> = ({ data }) => {
         {/* Hobbies */}
         {data.hobbies.length > 0 && (
           <div className="mb-6">
-            <h2 className="heading-professional">Hobbies & Interests</h2>
+            <h2 className="text-xl font-bold border-b border-slate-300 pb-2 mb-4 text-slate-700">Hobbies & Interests</h2>
             
             <div className="flex flex-wrap text-slate-700">
               {data.hobbies.map((hobby: string, index: number) => (
@@ -203,267 +218,30 @@ const ProfessionalTemplate: React.FC<TemplateProps> = ({ data }) => {
   );
 };
 
-const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
-  return (
-    <div className="font-arial text-slate-800 grid grid-cols-10 gap-4">
-      {/* Sidebar - Apple inspired design */}
-      <div className="col-span-3 bg-gradient-to-b from-medsume-appleGrey to-white p-6 min-h-full rounded-l-lg">
-        {data.personalDetails.photoUrl && (
-          <div className="mb-6 flex justify-center">
-            <img 
-              src={data.personalDetails.photoUrl} 
-              alt="Profile" 
-              className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-xl"
-            />
-          </div>
-        )}
-        
-        <div className="mb-8">
-          <h2 className="text-medsume-appleBlue font-semibold text-lg mb-4 pb-2 border-b border-slate-200">
-            Contact
-          </h2>
-          {data.personalDetails.email && (
-            <div className="mb-3 flex items-center text-sm">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-medsume-appleBlue" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-              {data.personalDetails.email}
-            </div>
-          )}
-          {data.personalDetails.phoneNumber && (
-            <div className="mb-3 flex items-center text-sm">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-medsume-appleBlue" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-              </svg>
-              {data.personalDetails.countryCode} {data.personalDetails.phoneNumber}
-            </div>
-          )}
-          {data.personalDetails.mailingAddress && (
-            <div className="mb-3 flex items-start text-sm">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 mt-1 text-medsume-appleBlue" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              <span>{data.personalDetails.mailingAddress}</span>
-            </div>
-          )}
-        </div>
-        
-        {/* Languages */}
-        {data.languages.length > 0 && (
-          <div className="mb-8">
-            <h2 className="text-medsume-appleBlue font-semibold text-lg mb-4 pb-2 border-b border-slate-200">
-              Languages
-            </h2>
-            
-            {data.languages.map((language: any) => (
-              <div key={language.id} className="mb-3">
-                <div className="flex justify-between items-center">
-                  <span className="font-medium">{language.name}</span>
-                  <span className="text-xs px-2 py-1 bg-medsume-appleBlue/10 rounded-full text-medsume-appleBlue">
-                    {language.proficiency}
-                  </span>
-                </div>
-                <div className="w-full bg-slate-200 rounded-full h-1.5 mt-1">
-                  <div 
-                    className="bg-medsume-appleBlue h-1.5 rounded-full" 
-                    style={{
-                      width: language.proficiency === 'Native' ? '100%' : 
-                             language.proficiency === 'Fluent' ? '80%' : 
-                             language.proficiency === 'Intermediate' ? '60%' : '30%'
-                    }}
-                  ></div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-        
-        {/* Hobbies */}
-        {data.hobbies.length > 0 && (
-          <div className="mb-8">
-            <h2 className="text-medsume-appleBlue font-semibold text-lg mb-4 pb-2 border-b border-slate-200">
-              Hobbies & Interests
-            </h2>
-            
-            <div className="flex flex-wrap gap-2">
-              {data.hobbies.map((hobby: string) => (
-                <span key={hobby} className="text-xs px-3 py-1 bg-medsume-appleBlue/10 rounded-full text-medsume-appleBlue">
-                  {hobby}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
-        
-        {/* Memberships */}
-        {data.memberships.length > 0 && (
-          <div className="mb-8">
-            <h2 className="text-medsume-appleBlue font-semibold text-lg mb-4 pb-2 border-b border-slate-200">
-              Professional Memberships
-            </h2>
-            
-            {data.memberships.map((membership: any) => (
-              <div key={membership.id} className="mb-4 p-3 bg-white rounded-lg shadow-sm">
-                <div className="font-medium text-medsume-appleDarkGrey">{membership.name}</div>
-                <div className="text-xs text-slate-500 mt-1 flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                  {membership.issueDate && formatDate(membership.issueDate)}
-                  {membership.expiryDate && ` - ${formatDate(membership.expiryDate)}`}
-                </div>
-                {membership.remarks && <div className="text-xs mt-2 text-slate-600">{membership.remarks}</div>}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-      
-      {/* Main Content */}
-      <div className="col-span-7 p-6">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-medsume-appleDarkGrey tracking-tight">
-            {data.personalDetails.firstName} {data.personalDetails.middleName} {data.personalDetails.lastName}
-          </h1>
-          {data.personalDetails.organization && (
-            <p className="text-xl text-medsume-appleBlue mt-1">{data.personalDetails.organization}</p>
-          )}
-          {data.personalDetails.idNumber && (
-            <p className="text-sm text-slate-500 mt-2 flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
-              </svg>
-              {data.personalDetails.idType}: {data.personalDetails.idNumber}
-            </p>
-          )}
-        </div>
-        
-        {/* Education */}
-        {(data.medicalEducation.length > 0 || data.otherEducation.length > 0) && (
-          <div className="mb-8">
-            <h2 className="text-xl font-bold text-medsume-appleBlue border-b-2 border-medsume-appleBlue/20 pb-2 mb-5">
-              Education
-            </h2>
-            
-            {data.medicalEducation.map((edu: any) => (
-              <div key={edu.id} className="mb-5 p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <div className="font-semibold text-lg">{edu.institution}</div>
-                    <div className="text-md text-slate-700">{edu.degree}{edu.location ? `, ${edu.location}` : ''}</div>
-                  </div>
-                  <div className="text-sm px-3 py-1 bg-medsume-appleBlue/10 rounded-full text-medsume-appleBlue">
-                    {edu.startDate && formatDate(edu.startDate)} - {edu.endDate ? formatDate(edu.endDate) : "Present"}
-                  </div>
-                </div>
-                {edu.remarks && <p className="text-sm text-slate-600 mt-2">{edu.remarks}</p>}
-              </div>
-            ))}
-            
-            {data.otherEducation.map((edu: any) => (
-              <div key={edu.id} className="mb-5 p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <div className="font-semibold text-lg">{edu.institution}</div>
-                    <div className="text-md text-slate-700">{edu.degree}{edu.location ? `, ${edu.location}` : ''}</div>
-                  </div>
-                  <div className="text-sm px-3 py-1 bg-medsume-appleBlue/10 rounded-full text-medsume-appleBlue">
-                    {edu.startDate && formatDate(edu.startDate)} - {edu.endDate ? formatDate(edu.endDate) : "Present"}
-                  </div>
-                </div>
-                {edu.remarks && <p className="text-sm text-slate-600 mt-2">{edu.remarks}</p>}
-              </div>
-            ))}
-          </div>
-        )}
-        
-        {/* Experience */}
-        {data.experiences.length > 0 && (
-          <div className="mb-8">
-            <h2 className="text-xl font-bold text-medsume-appleBlue border-b-2 border-medsume-appleBlue/20 pb-2 mb-5">
-              Experience
-            </h2>
-            
-            {data.experiences.map((exp: any) => (
-              <div key={exp.id} className="mb-5 p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <div className="font-semibold text-lg">{exp.role}</div>
-                    <div className="text-md text-slate-700">{exp.department}, {exp.institution}</div>
-                  </div>
-                  <div className="text-sm px-3 py-1 bg-medsume-appleBlue/10 rounded-full text-medsume-appleBlue">
-                    {exp.startDate && formatDate(exp.startDate)} - {exp.endDate ? formatDate(exp.endDate) : "Present"}
-                  </div>
-                </div>
-                <p className="text-sm text-slate-600 mt-3">{exp.description}</p>
-              </div>
-            ))}
-          </div>
-        )}
-        
-        {/* Awards */}
-        {data.awards.length > 0 && (
-          <div className="mb-8">
-            <h2 className="text-xl font-bold text-medsume-appleBlue border-b-2 border-medsume-appleBlue/20 pb-2 mb-5">
-              Honors & Awards
-            </h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {data.awards.map((award: any) => (
-                <div key={award.id} className="p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                  <div className="font-semibold text-lg text-medsume-appleDarkGrey">{award.title}</div>
-                  <div className="text-slate-700">{award.organization}</div>
-                  <div className="text-xs text-medsume-appleBlue mt-1">{award.date && formatDate(award.date)}</div>
-                  {award.description && <p className="text-sm text-slate-600 mt-2">{award.description}</p>}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-        
-        {/* Publications */}
-        {((data.publications && data.publications.length > 0) || data.publicationsText) && (
-          <div className="mb-8">
-            <h2 className="text-xl font-bold text-medsume-appleBlue border-b-2 border-medsume-appleBlue/20 pb-2 mb-5">
-              Publications
-            </h2>
-            
-            <div className="p-4 bg-white rounded-lg shadow-sm">
-              {data.publicationsText ? (
-                <div className="whitespace-pre-line text-sm text-slate-700">{data.publicationsText}</div>
-              ) : (
-                <div className="space-y-4">
-                  {data.publications.map((pub: any) => (
-                    <div key={pub.id} className="text-sm border-l-2 border-medsume-appleBlue/30 pl-3">
-                      <div className="font-medium">{pub.title}</div>
-                      <div className="text-slate-700">{pub.authors}</div>
-                      <div className="text-slate-600 italic">{pub.journal}. {pub.date && formatDate(pub.date)}.</div>
-                      {pub.doi && <div className="text-medsume-appleBlue text-xs mt-1">DOI: {pub.doi}</div>}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
-      
-      {/* Footer */}
-      <div className="col-span-10 text-center mt-4 pt-4 border-t border-slate-200 text-xs text-slate-400">
-        Created with Medsume by Shank
-      </div>
-    </div>
-  );
-};
-
 const ExecutiveTemplate: React.FC<TemplateProps> = ({ data }) => {
   return (
     <div className="font-garamond text-medsume-resumeBlue bg-medsume-resumeWhite px-8 py-6">
-      {/* Header - Luxury style */}
+      {/* Header - Enhanced Luxury style */}
       <div className="text-center mb-8 pb-6 relative">
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-medsume-resumeGold via-medsume-resumeSilver to-medsume-resumeGold"></div>
+        <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-medsume-resumeGold via-medsume-resumeSilver to-medsume-resumeGold"></div>
+        
+        {/* QR Code for social media */}
+        {data.personalDetails.socialMediaUrl && (
+          <div className="absolute top-4 right-2">
+            <div className="flex flex-col items-center">
+              <QRCode 
+                value={data.personalDetails.socialMediaUrl} 
+                size={64} 
+                level="H"
+                renderAs="svg"
+                fgColor="#8A7B52"
+                bgColor="#FFFFFF"
+              />
+              <Linkedin size={14} className="text-medsume-resumeGold mt-1" />
+            </div>
+          </div>
+        )}
+        
         <h1 className="text-4xl font-bold tracking-wide mb-2 text-medsume-resumeBlue">
           {data.personalDetails.firstName} {data.personalDetails.middleName} {data.personalDetails.lastName}
         </h1>
@@ -484,7 +262,7 @@ const ExecutiveTemplate: React.FC<TemplateProps> = ({ data }) => {
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-medsume-resumeGold" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
               </svg>
-              {data.personalDetails.countryCode} {data.personalDetails.phoneNumber}
+              {data.personalDetails.phoneNumber}
             </span>
           )}
           {data.personalDetails.mailingAddress && (
@@ -497,7 +275,7 @@ const ExecutiveTemplate: React.FC<TemplateProps> = ({ data }) => {
             </span>
           )}
         </div>
-        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-medsume-resumeGold via-medsume-resumeSilver to-medsume-resumeGold"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-2 bg-gradient-to-r from-medsume-resumeGold via-medsume-resumeSilver to-medsume-resumeGold"></div>
       </div>
       
       {/* Education */}
@@ -581,7 +359,9 @@ const ExecutiveTemplate: React.FC<TemplateProps> = ({ data }) => {
                   {exp.startDate && formatDate(exp.startDate)} - {exp.endDate ? formatDate(exp.endDate) : "Present"}
                 </div>
               </div>
-              <div className="text-lg mb-2">{exp.department}, {exp.institution}</div>
+              <div className="text-lg mb-2">
+                {exp.department ? `${exp.department}, ${exp.institution}` : exp.institution}
+              </div>
               <p className="text-base">{exp.description}</p>
             </div>
           ))}
@@ -603,7 +383,7 @@ const ExecutiveTemplate: React.FC<TemplateProps> = ({ data }) => {
           ) : (
             <div className="space-y-5">
               {data.publications.map((pub: any) => (
-                <div key={pub.id} className="text-base pl-4 border-l-2 border-medsume-resumeGold">
+                <div key={pub.id} className="text-base pl-4 border-l-2 border-medsume-resumeGold bg-medsume-resumeGold/5 p-3 rounded-r-md">
                   <div className="italic text-lg mb-1">{pub.title}</div>
                   <div className="mb-1">{pub.authors}</div>
                   <div className="text-medsume-resumeBlue">{pub.journal}. {pub.date && formatDate(pub.date)}.</div>
@@ -627,8 +407,9 @@ const ExecutiveTemplate: React.FC<TemplateProps> = ({ data }) => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {data.memberships.map((membership: any) => (
-              <div key={membership.id} className="pl-4 border-l-2 border-medsume-resumeGold">
+              <div key={membership.id} className="pl-4 border-l-2 border-medsume-resumeGold bg-medsume-resumeGold/5 p-3 rounded-r-md">
                 <div className="font-bold text-xl text-medsume-resumeBlue">{membership.name}</div>
+                {membership.issuedBy && <div className="text-base text-medsume-resumeGold/80">Issued by: {membership.issuedBy}</div>}
                 <div className="text-base">
                   {membership.issueDate && formatDate(membership.issueDate)}
                   {membership.expiryDate && ` - ${formatDate(membership.expiryDate)}`}
@@ -700,6 +481,11 @@ const ExecutiveTemplate: React.FC<TemplateProps> = ({ data }) => {
 const ResumePreview = () => {
   const { template, resumeData } = useResume();
   
+  // If template is 'modern', switch to 'professional'
+  useEffect(() => {
+    // No need to implement this as we've already handled it in TemplateSelector
+  }, [template]);
+  
   const handleDownloadPDF = () => {
     const element = document.getElementById('resume-preview');
     if (!element) return;
@@ -709,7 +495,8 @@ const ResumePreview = () => {
       filename: `${resumeData.personalDetails.firstName}_${resumeData.personalDetails.lastName}_Resume.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: { scale: 2, useCORS: true, logging: false },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
     };
     
     toast.info("Generating PDF...");
@@ -747,8 +534,8 @@ const ResumePreview = () => {
           style={{ minHeight: '29.7cm' }}
         >
           {template === 'professional' && <ProfessionalTemplate data={resumeData} />}
-          {template === 'modern' && <ModernTemplate data={resumeData} />}
           {template === 'executive' && <ExecutiveTemplate data={resumeData} />}
+          {template === 'modern' && <ProfessionalTemplate data={resumeData} />} {/* Fallback */}
         </div>
       </div>
     </div>

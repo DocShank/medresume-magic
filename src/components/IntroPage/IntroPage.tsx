@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import LogoAnimation from './LogoAnimation';
 import FoundingTeam from './FoundingTeam';
+import { ArrowDown } from 'lucide-react';
 
 const IntroPage = () => {
   const [animationComplete, setAnimationComplete] = useState(false);
@@ -9,7 +10,7 @@ const IntroPage = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setAnimationComplete(true);
-    }, 5000); // Animation completes after 5 seconds
+    }, 2500); // Animation completes after 2.5 seconds - faster
 
     return () => clearTimeout(timer);
   }, []);
@@ -28,9 +29,15 @@ const IntroPage = () => {
         <h1 className="text-2xl md:text-3xl font-semibold font-sfpro mb-4 text-medsume-textDark animate-fade-in">
           Welcome to the Medical Professional Community
         </h1>
-        <p className="text-lg md:text-xl font-opensans text-medsume-textDark leading-relaxed">
+        <p className="text-lg md:text-xl font-opensans text-medsume-textDark leading-relaxed mb-6">
           Create stunning, professional resumes tailored for medical practitioners. Our specialized tool helps you showcase your credentials with precision and elegance.
         </p>
+        
+        {/* Added navigation guidance */}
+        <div className="flex flex-col items-center mt-6 animate-bounce" style={{animationDuration: '2s'}}>
+          <p className="text-medsume-textDark mb-2">Swipe down to start creating</p>
+          <ArrowDown size={24} className="text-medsume-appleBlue" />
+        </div>
       </div>
       
       <div className="mt-12 w-full z-10">

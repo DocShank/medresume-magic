@@ -2,7 +2,7 @@
 import React from 'react';
 import { useResume } from './ResumeContext';
 import { Card, CardContent } from "@/components/ui/card";
-import { Check, Layout, Briefcase, Award } from "lucide-react";
+import { Check, Briefcase, Award } from "lucide-react";
 
 const TemplateSelector = () => {
   const { template, setTemplate } = useResume();
@@ -16,13 +16,6 @@ const TemplateSelector = () => {
       previewClass: 'border-t-4 border-white'
     },
     {
-      id: 'modern',
-      name: 'Modern',
-      description: 'Clean sidebar with contemporary styling',
-      icon: <Layout className="text-white h-5 w-5" />,
-      previewClass: 'border-l-4 border-medsume-appleBlue'
-    },
-    {
       id: 'executive',
       name: 'Executive',
       description: 'Premium layout with distinguished accents',
@@ -30,6 +23,13 @@ const TemplateSelector = () => {
       previewClass: 'border-t-4 border-medsume-resumeGold'
     }
   ];
+
+  // Set default to professional if the current template was modern
+  React.useEffect(() => {
+    if (template === 'modern') {
+      setTemplate('professional');
+    }
+  }, [template, setTemplate]);
 
   return (
     <div className="mb-10">
@@ -41,7 +41,7 @@ const TemplateSelector = () => {
         </div>
         Select Your Template
       </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         {templates.map((t) => (
           <Card 
             key={t.id} 
@@ -57,8 +57,7 @@ const TemplateSelector = () => {
                   {t.icon}
                 </div>
                 <span className={`text-lg font-medium text-white
-                  ${t.id === 'professional' ? 'font-times' : 
-                    t.id === 'modern' ? 'font-arial' : 'font-garamond'}`}>
+                  ${t.id === 'professional' ? 'font-times' : 'font-garamond'}`}>
                   {t.name}
                 </span>
                 <div className="w-3/4 h-1 bg-white/20 mt-2"></div>

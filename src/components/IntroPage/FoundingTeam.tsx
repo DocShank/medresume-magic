@@ -3,19 +3,19 @@ import React from 'react';
 
 const teamMembers = [
   {
-    name: "Shashank Neupane",
-    designation: "MBBS - Creator & Lead Developer",
+    name: "Shashank Neupane, MBBS",
+    designation: "Creator & Lead Developer",
     image: "/lovable-uploads/3f161cb9-78bb-4954-b747-6004ff80385b.png"
   },
   {
-    name: "Prasamsa Pudasaini",
-    designation: "MBBS - Product Design & Quality Lead",
-    image: "/lovable-uploads/d6a53a16-1e5e-4b10-a947-91254d354f2c.png"
+    name: "Prasamsa, MBBS",
+    designation: "Product Design & Quality Lead",
+    image: "/lovable-uploads/34b4fc55-03e5-4ead-8e34-7c0961e476a3.png" // Swapped image
   },
   {
-    name: "Aashriya Neupane",
-    designation: "BBA-Finance - Template & Operations Manager",
-    image: "/lovable-uploads/2a55cd5f-e090-40a6-b93b-04f2b45a85f4.png"
+    name: "Aashriya Neupane, BBA Finance",
+    designation: "Template & Operations Manager",
+    image: "/lovable-uploads/d6a53a16-1e5e-4b10-a947-91254d354f2c.png" // Swapped image
   }
 ];
 

@@ -27,13 +27,13 @@ const Index = () => {
 
   return (
     <div className="min-h-screen w-full overflow-x-hidden">
-      <section id="intro" className="min-h-screen relative pb-16">
+      <section id="intro" className="min-h-screen relative pb-24">
         <IntroPage />
-        <div className="fixed bottom-6 right-6 z-20 animate-bounce" style={{animationDuration: '3s'}}>
+        <div className="fixed bottom-8 right-8 z-20 animate-bounce" style={{animationDuration: '3s'}}>
           <a 
             href="#builder" 
-            className="flex items-center justify-center w-12 h-12 bg-white rounded-full shadow-apple text-medsume-appleBlue hover:text-medsume-appleBlueLight transition-all duration-300 hover:shadow-lg hover:scale-110"
-            aria-label="Discover Our Resume Builder"
+            className="flex items-center justify-center w-14 h-14 bg-white rounded-full shadow-apple text-medsume-appleBlue hover:text-medsume-appleBlueLight transition-all duration-300 hover:shadow-lg hover:scale-110"
+            aria-label="Go to Resume Builder"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
