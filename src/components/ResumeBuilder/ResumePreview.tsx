@@ -54,11 +54,14 @@ const ProfessionalTemplate: React.FC<TemplateProps> = ({ data }) => {
         {/* QR Code for social media */}
         {data.personalDetails.socialMediaUrl && (
           <div className="absolute top-0 right-0">
-            <QRCodeSVG 
-              value={data.personalDetails.socialMediaUrl} 
-              size={64} 
-              level="H"
-            />
+            <div className="flex flex-col items-center">
+              <QRCodeSVG 
+                value={data.personalDetails.socialMediaUrl} 
+                size={64} 
+                level="H"
+              />
+              <span className="text-xs text-slate-500 mt-1">Connect with me</span>
+            </div>
           </div>
         )}
       </div>
@@ -110,7 +113,7 @@ const ProfessionalTemplate: React.FC<TemplateProps> = ({ data }) => {
                 </span>
               </div>
               <p className="text-md mb-1">
-                {exp.department ? `${exp.department}, ${exp.institution}` : exp.institution}
+                {exp.department && exp.institution ? `${exp.department}, ${exp.institution}` : exp.institution}
               </p>
               <p className="text-sm text-slate-700">{exp.description}</p>
             </div>
@@ -220,33 +223,37 @@ const ProfessionalTemplate: React.FC<TemplateProps> = ({ data }) => {
 const ExecutiveTemplate: React.FC<TemplateProps> = ({ data }) => {
   return (
     <div className="font-garamond text-medsume-resumeBlue bg-medsume-resumeWhite px-8 py-6">
-      {/* Header - Enhanced Luxury style */}
-      <div className="text-center mb-8 pb-6 relative">
+      {/* Header - Enhanced Luxury style with improved spacing */}
+      <div className="text-center mb-12 pb-8 relative">
         <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-medsume-resumeGold via-medsume-resumeSilver to-medsume-resumeGold"></div>
         
         {/* QR Code for social media */}
         {data.personalDetails.socialMediaUrl && (
-          <div className="absolute top-4 right-2">
+          <div className="absolute top-6 right-2">
             <div className="flex flex-col items-center">
               <QRCodeSVG 
                 value={data.personalDetails.socialMediaUrl} 
-                size={64} 
+                size={70} 
                 level="H"
                 fgColor="#8A7B52"
                 bgColor="#FFFFFF"
               />
-              <Linkedin size={14} className="text-medsume-resumeGold mt-1" />
+              <div className="flex items-center mt-1 text-medsume-resumeGold">
+                <Linkedin size={12} className="mr-1" />
+                <span className="text-xs">Connect with me</span>
+              </div>
             </div>
           </div>
         )}
         
-        <h1 className="text-4xl font-bold tracking-wide mb-2 text-medsume-resumeBlue">
+        <h1 className="text-4xl font-bold tracking-wide mb-4 text-medsume-resumeBlue mt-8">
           {data.personalDetails.firstName} {data.personalDetails.middleName} {data.personalDetails.lastName}
         </h1>
         {data.personalDetails.organization && (
-          <p className="text-xl text-medsume-resumeGold font-semibold mb-3">{data.personalDetails.organization}</p>
+          <p className="text-xl text-medsume-resumeGold font-semibold mb-5">{data.personalDetails.organization}</p>
         )}
-        <div className="flex justify-center items-center flex-wrap gap-8 mt-4">
+        
+        <div className="flex justify-center items-center flex-wrap gap-8 mt-6">
           {data.personalDetails.email && (
             <span className="text-base flex items-center gap-2">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-medsume-resumeGold" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -358,7 +365,7 @@ const ExecutiveTemplate: React.FC<TemplateProps> = ({ data }) => {
                 </div>
               </div>
               <div className="text-lg mb-2">
-                {exp.department ? `${exp.department}, ${exp.institution}` : exp.institution}
+                {exp.department && exp.institution ? `${exp.department}, ${exp.institution}` : exp.institution}
               </div>
               <p className="text-base">{exp.description}</p>
             </div>

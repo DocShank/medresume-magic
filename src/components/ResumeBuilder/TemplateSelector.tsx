@@ -49,7 +49,7 @@ const TemplateSelector = () => {
                       ${template === t.id 
                         ? 'ring-2 ring-medsume-appleBlue bg-gradient-to-br from-medsume-appleBlue/20 to-medsume-teal/10 shadow-lg transform scale-[1.02]' 
                         : 'bg-white/5 backdrop-blur-md hover:bg-white/10 hover:shadow-xl hover:scale-[1.01] transform transition-all border border-white/10'}`}
-            onClick={() => setTemplate(t.id as any)}
+            onClick={() => setTemplate(t.id)}
           >
             <CardContent className="p-6 text-white">
               <div className={`h-36 mb-5 rounded-lg flex flex-col items-center justify-center ${t.previewClass} p-4 bg-gradient-to-br from-slate-800/50 to-black/30 backdrop-blur-sm border border-white/5`}>
