@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react';
 import IntroPage from '../components/IntroPage/IntroPage';
 import ResumeBuilder from '../components/ResumeBuilder/ResumeBuilder';
+import { ChevronDown } from 'lucide-react';
 
 const Index = () => {
   // Apply smooth scrolling behavior globally
@@ -27,22 +28,38 @@ const Index = () => {
     };
   }, []);
 
+  const scrollToBuilder = () => {
+    const element = document.getElementById('builder');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="min-h-screen w-full overflow-x-hidden">
       <section id="intro" className="min-h-screen relative pb-24">
         <IntroPage />
+        
+        {/* Swipe down prompt */}
         <div className="fixed bottom-8 right-8 z-20 animate-bounce" style={{animationDuration: '2s'}}>
           <a 
             href="#builder" 
             className="flex items-center justify-center w-14 h-14 bg-white rounded-full shadow-apple text-medsume-appleBlue hover:text-medsume-appleBlueLight transition-all duration-300 hover:shadow-lg hover:scale-110"
             aria-label="Go to Resume Builder"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-            </svg>
+            <ChevronDown className="h-6 w-6" />
           </a>
         </div>
       </section>
+      
+      {/* User guidance animation between sections */}
+      <div 
+        className="w-full py-8 flex flex-col items-center justify-center bg-gradient-to-r from-slate-800 to-slate-900 cursor-pointer"
+        onClick={scrollToBuilder}
+      >
+        <p className="text-white text-center mb-2">Swipe down to start creating your professional resume</p>
+        <ChevronDown className="h-6 w-6 text-white animate-bounce" />
+      </div>
       
       <section id="builder" className="min-h-screen relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-slate-900 to-medsume-appleDarkGrey"></div>
