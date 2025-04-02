@@ -1,8 +1,9 @@
+
 import React from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useResume, IdType } from './ResumeContext';
 
-// Export the component using a named export (not default export)
+// Export the component using a named export
 export const ResumeForm = () => {
   const { 
     resumeData, 
@@ -43,5 +44,5 @@ export const ResumeForm = () => {
   );
 };
 
-// Make sure to add this export to resolve the default export error
+// Make this the default export as well
 export default ResumeForm;
