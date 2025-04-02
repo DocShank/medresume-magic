@@ -15,6 +15,13 @@ const IntroPage = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  const scrollToBuilder = () => {
+    const element = document.getElementById('builder');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-white p-4 md:p-8 relative overflow-hidden">
       {/* Apple-style gradient blurred circles in background */}
@@ -34,7 +41,7 @@ const IntroPage = () => {
         </p>
         
         {/* Add navigation guidance between welcome and founding team */}
-        <div className="flex flex-col items-center mt-6 animate-bounce" style={{animationDuration: '2s'}}>
+        <div className="flex flex-col items-center mt-6 animate-bounce" style={{animationDuration: '2s'}} onClick={scrollToBuilder}>
           <p className="text-medsume-textDark mb-2">Swipe down to start creating</p>
           <ArrowDown size={24} className="text-medsume-appleBlue" />
         </div>

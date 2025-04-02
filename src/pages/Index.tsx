@@ -2,7 +2,6 @@
 import React, { useEffect } from 'react';
 import IntroPage from '../components/IntroPage/IntroPage';
 import ResumeBuilder from '../components/ResumeBuilder/ResumeBuilder';
-import { ChevronDown } from 'lucide-react';
 
 const Index = () => {
   // Apply smooth scrolling behavior globally
@@ -27,13 +26,6 @@ const Index = () => {
       document.documentElement.style.scrollBehavior = 'auto';
     };
   }, []);
-
-  const scrollToBuilder = () => {
-    const element = document.getElementById('builder');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
 
   return (
     <div className="min-h-screen w-full overflow-x-hidden">
