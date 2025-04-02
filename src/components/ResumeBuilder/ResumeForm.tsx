@@ -3,7 +3,7 @@ import React from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useResume, IdType } from './ResumeContext';
 
-// Export the component using a named export
+// Export the component as a named export
 export const ResumeForm = () => {
   const { 
     resumeData, 
@@ -44,5 +44,5 @@ export const ResumeForm = () => {
   );
 };
 
-// Make this the default export as well
+// Also export as default for backwards compatibility
 export default ResumeForm;
