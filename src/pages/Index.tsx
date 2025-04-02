@@ -37,29 +37,9 @@ const Index = () => {
 
   return (
     <div className="min-h-screen w-full overflow-x-hidden">
-      <section id="intro" className="min-h-screen relative pb-24">
+      <section id="intro" className="min-h-screen relative">
         <IntroPage />
-        
-        {/* Swipe down prompt */}
-        <div className="fixed bottom-8 right-8 z-20 animate-bounce" style={{animationDuration: '2s'}}>
-          <a 
-            href="#builder" 
-            className="flex items-center justify-center w-14 h-14 bg-white rounded-full shadow-apple text-medsume-appleBlue hover:text-medsume-appleBlueLight transition-all duration-300 hover:shadow-lg hover:scale-110"
-            aria-label="Go to Resume Builder"
-          >
-            <ChevronDown className="h-6 w-6" />
-          </a>
-        </div>
       </section>
-      
-      {/* User guidance animation between sections */}
-      <div 
-        className="w-full py-8 flex flex-col items-center justify-center bg-gradient-to-r from-slate-800 to-slate-900 cursor-pointer"
-        onClick={scrollToBuilder}
-      >
-        <p className="text-white text-center mb-2">Swipe down to start creating your professional resume</p>
-        <ChevronDown className="h-6 w-6 text-white animate-bounce" />
-      </div>
       
       <section id="builder" className="min-h-screen relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-slate-900 to-medsume-appleDarkGrey"></div>

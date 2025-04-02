@@ -33,7 +33,7 @@ const IntroPage = () => {
           Create stunning, professional resumes tailored for medical practitioners. Our specialized tool helps you showcase your credentials with precision and elegance.
         </p>
         
-        {/* Added navigation guidance */}
+        {/* Add navigation guidance between welcome and founding team */}
         <div className="flex flex-col items-center mt-6 animate-bounce" style={{animationDuration: '2s'}}>
           <p className="text-medsume-textDark mb-2">Swipe down to start creating</p>
           <ArrowDown size={24} className="text-medsume-appleBlue" />
