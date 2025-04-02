@@ -1,11 +1,11 @@
 
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ResumeForm } from './ResumeForm';
+import ResumeForm from './ResumeForm';
 import ResumePreview from './ResumePreview';
 import TemplateSelector from './TemplateSelector';
 import { ResumeProvider } from './ResumeContext';
-import { Edit, EyeIcon } from 'lucide-react';
+import { Edit, EyeIcon, ChevronDown } from 'lucide-react';
 
 const ResumeBuilder = () => {
   const [currentTab, setCurrentTab] = useState("edit");
@@ -22,6 +22,12 @@ const ResumeBuilder = () => {
               <div className="px-6 py-2 rounded-full bg-white/10 backdrop-blur-sm text-sm font-medium border border-white/20 shadow-inner">
                 Premium Resume Builder for Medical Professionals
               </div>
+            </div>
+            
+            {/* User guidance animation */}
+            <div className="flex flex-col items-center mt-6 mb-12 text-white/70 animate-pulse">
+              <p className="mb-2">Swipe down to start creating your professional resume</p>
+              <ChevronDown className="h-6 w-6 animate-bounce" />
             </div>
           </header>
           

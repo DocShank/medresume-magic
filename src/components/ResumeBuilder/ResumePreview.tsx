@@ -60,10 +60,7 @@ const ProfessionalTemplate: React.FC<TemplateProps> = ({ data }) => {
                 size={64} 
                 level="H"
               />
-              <span className="text-xs text-slate-500 mt-1 flex items-center">
-                <Linkedin size={10} className="mr-1" />
-                Connect with me
-              </span>
+              <span className="text-xs text-slate-500 mt-1">Connect with me</span>
             </div>
           </div>
         )}
@@ -116,10 +113,7 @@ const ProfessionalTemplate: React.FC<TemplateProps> = ({ data }) => {
                 </span>
               </div>
               <p className="text-md mb-1">
-                {exp.department && exp.institution 
-                  ? `${exp.department}, ${exp.institution}` 
-                  : exp.institution
-                }
+                {exp.department && exp.institution ? `${exp.department}, ${exp.institution}` : exp.institution}
               </p>
               <p className="text-sm text-slate-700">{exp.description}</p>
             </div>
@@ -252,15 +246,14 @@ const ExecutiveTemplate: React.FC<TemplateProps> = ({ data }) => {
           </div>
         )}
         
-        <h1 className="text-4xl font-bold tracking-wide mb-6 text-medsume-resumeBlue mt-8">
+        <h1 className="text-4xl font-bold tracking-wide mb-4 text-medsume-resumeBlue mt-8">
           {data.personalDetails.firstName} {data.personalDetails.middleName} {data.personalDetails.lastName}
         </h1>
         {data.personalDetails.organization && (
-          <p className="text-xl text-medsume-resumeGold font-semibold mb-6">{data.personalDetails.organization}</p>
+          <p className="text-xl text-medsume-resumeGold font-semibold mb-5">{data.personalDetails.organization}</p>
         )}
         
-        {/* Added more spacing before the separator bar */}
-        <div className="flex justify-center items-center flex-wrap gap-8 mt-8">
+        <div className="flex justify-center items-center flex-wrap gap-8 mt-6">
           {data.personalDetails.email && (
             <span className="text-base flex items-center gap-2">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-medsume-resumeGold" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -372,10 +365,7 @@ const ExecutiveTemplate: React.FC<TemplateProps> = ({ data }) => {
                 </div>
               </div>
               <div className="text-lg mb-2">
-                {exp.department && exp.institution 
-                  ? `${exp.department}, ${exp.institution}` 
-                  : exp.institution
-                }
+                {exp.department && exp.institution ? `${exp.department}, ${exp.institution}` : exp.institution}
               </div>
               <p className="text-base">{exp.description}</p>
             </div>
@@ -501,7 +491,7 @@ const ResumePreview = () => {
     if (!element) return;
     
     const opt = {
-      margin: [15, 15, 15, 15], // Increased margins to prevent text cutting off
+      margin: [10, 10, 10, 10],
       filename: `${resumeData.personalDetails.firstName}_${resumeData.personalDetails.lastName}_Resume.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: { scale: 2, useCORS: true, logging: false },

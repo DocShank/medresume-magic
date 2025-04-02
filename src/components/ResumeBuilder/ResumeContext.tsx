@@ -58,45 +58,13 @@ export type Language = {
   proficiency: 'Native' | 'Fluent' | 'Intermediate' | 'Basic';
 };
 
-export type IdType = 
-  | 'NMC – Nepal Medical Council (Regulatory body for medical professionals in Nepal)'
-  | 'GMC – General Medical Council (UK regulatory body for medical practitioners)'
-  | 'USMLE – United States Medical Licensing Examination (Licensing exam for the USA)'
-  | 'MCI – Medical Council of India (Now replaced by National Medical Commission - NMC India)'
-  | 'AMC – Australian Medical Council (Regulates medical practitioners in Australia)'
-  | 'HPCSA – Health Professions Council of South Africa (Regulatory body for health professionals in South Africa)'
-  | 'PMDC – Pakistan Medical & Dental Council (Now replaced by Pakistan Medical Commission - PMC)'
-  | 'SMC – Singapore Medical Council (Regulates medical practitioners in Singapore)'
-  | 'SMD – Saudi Medical Diploma (Certification for medical professionals in Saudi Arabia)'
-  | 'SMD1/SMD2 – Saudi Medical Diploma – Level 1 & 2 (Progressive certification levels in Saudi training)'
-  | 'BMDC – Bangladesh Medical & Dental Council (Regulates medical practitioners in Bangladesh)'
-  | 'SLMC – Sri Lanka Medical Council (Regulatory body for medical professionals in Sri Lanka)'
-  | 'MMC – Malaysian Medical Council (Regulatory authority for medical professionals in Malaysia)'
-  | 'NBME – National Board of Medical Examiners (Develops assessment exams for US physicians, including USMLE)'
-  | 'ECFMG – Educational Commission for Foreign Medical Graduates (Certifies foreign medical graduates for the US)'
-  | 'FSMB – Federation of State Medical Boards (Oversees state-specific licensing in the US)'
-  | 'CFPC – College of Family Physicians of Canada (Certifies family physicians in Canada)'
-  | 'RCPSC – Royal College of Physicians and Surgeons of Canada (Certifying body for specialist physicians in Canada)'
-  | 'DHA – Dubai Health Authority (Regulates healthcare professionals in Dubai, UAE)'
-  | 'MOH UAE – Ministry of Health United Arab Emirates (Regulates healthcare professionals across UAE)'
-  | 'HAAD – Health Authority Abu Dhabi (Regulates medical professionals in Abu Dhabi, UAE)'
-  | 'OMSB – Oman Medical Specialty Board (Regulates medical training in Oman)'
-  | 'QCHP – Qatar Council for Healthcare Practitioners (Regulatory body for medical professionals in Qatar)'
-  | 'IMC – Irish Medical Council (Regulates medical professionals in Ireland)'
-  | 'SMC (Sweden) – Swedish Medical Council (Licensing authority for medical professionals in Sweden)'
-  | 'NVMSR – Norwegian Registration Authority for Health Personnel (Medical licensing in Norway)'
-  | 'NLMC – Netherlands Medical Council (Regulatory body for medical professionals in the Netherlands)'
-  | 'AMC-NZ – Medical Council of New Zealand (Regulatory body for medical professionals in New Zealand)'
-  | 'Others';
-
 export type PersonalDetails = {
   photoUrl?: string;
   firstName: string;
   middleName?: string;
   lastName: string;
   organization?: string;
-  idType?: IdType;
-  customIdType?: string;
+  idType?: string;
   idNumber?: string;
   hasAccreditedId: boolean;
   accreditedOrg?: string;
@@ -149,41 +117,7 @@ export type ResumeContextType = {
   updateLanguage: (id: string, language: Partial<Language>) => void;
   removeLanguage: (id: string) => void;
   updateHobbies: (hobbies: string[]) => void;
-  getIdTypeList: () => { value: IdType; label: string }[];
-  getIdDisplay: (idType: IdType, customIdType?: string) => string;
 };
-
-export const idTypeOptions: { value: IdType; label: string }[] = [
-  { value: 'NMC – Nepal Medical Council (Regulatory body for medical professionals in Nepal)', label: 'NMC – Nepal Medical Council' },
-  { value: 'GMC – General Medical Council (UK regulatory body for medical practitioners)', label: 'GMC – General Medical Council' },
-  { value: 'USMLE – United States Medical Licensing Examination (Licensing exam for the USA)', label: 'USMLE – United States Medical Licensing Examination' },
-  { value: 'MCI – Medical Council of India (Now replaced by National Medical Commission - NMC India)', label: 'MCI – Medical Council of India' },
-  { value: 'AMC – Australian Medical Council (Regulates medical practitioners in Australia)', label: 'AMC – Australian Medical Council' },
-  { value: 'HPCSA – Health Professions Council of South Africa (Regulatory body for health professionals in South Africa)', label: 'HPCSA – Health Professions Council of South Africa' },
-  { value: 'PMDC – Pakistan Medical & Dental Council (Now replaced by Pakistan Medical Commission - PMC)', label: 'PMDC – Pakistan Medical & Dental Council' },
-  { value: 'SMC – Singapore Medical Council (Regulates medical practitioners in Singapore)', label: 'SMC – Singapore Medical Council' },
-  { value: 'SMD – Saudi Medical Diploma (Certification for medical professionals in Saudi Arabia)', label: 'SMD – Saudi Medical Diploma' },
-  { value: 'SMD1/SMD2 – Saudi Medical Diploma – Level 1 & 2 (Progressive certification levels in Saudi training)', label: 'SMD1/SMD2 – Saudi Medical Diploma – Level 1 & 2' },
-  { value: 'BMDC – Bangladesh Medical & Dental Council (Regulates medical practitioners in Bangladesh)', label: 'BMDC – Bangladesh Medical & Dental Council' },
-  { value: 'SLMC – Sri Lanka Medical Council (Regulatory body for medical professionals in Sri Lanka)', label: 'SLMC – Sri Lanka Medical Council' },
-  { value: 'MMC – Malaysian Medical Council (Regulatory authority for medical professionals in Malaysia)', label: 'MMC – Malaysian Medical Council' },
-  { value: 'NBME – National Board of Medical Examiners (Develops assessment exams for US physicians, including USMLE)', label: 'NBME – National Board of Medical Examiners' },
-  { value: 'ECFMG – Educational Commission for Foreign Medical Graduates (Certifies foreign medical graduates for the US)', label: 'ECFMG – Educational Commission for Foreign Medical Graduates' },
-  { value: 'FSMB – Federation of State Medical Boards (Oversees state-specific licensing in the US)', label: 'FSMB – Federation of State Medical Boards' },
-  { value: 'CFPC – College of Family Physicians of Canada (Certifies family physicians in Canada)', label: 'CFPC – College of Family Physicians of Canada' },
-  { value: 'RCPSC – Royal College of Physicians and Surgeons of Canada (Certifying body for specialist physicians in Canada)', label: 'RCPSC – Royal College of Physicians and Surgeons of Canada' },
-  { value: 'DHA – Dubai Health Authority (Regulates healthcare professionals in Dubai, UAE)', label: 'DHA – Dubai Health Authority' },
-  { value: 'MOH UAE – Ministry of Health United Arab Emirates (Regulates healthcare professionals across UAE)', label: 'MOH UAE – Ministry of Health United Arab Emirates' },
-  { value: 'HAAD – Health Authority Abu Dhabi (Regulates medical professionals in Abu Dhabi, UAE)', label: 'HAAD – Health Authority Abu Dhabi' },
-  { value: 'OMSB – Oman Medical Specialty Board (Regulates medical training in Oman)', label: 'OMSB – Oman Medical Specialty Board' },
-  { value: 'QCHP – Qatar Council for Healthcare Practitioners (Regulatory body for medical professionals in Qatar)', label: 'QCHP – Qatar Council for Healthcare Practitioners' },
-  { value: 'IMC – Irish Medical Council (Regulates medical professionals in Ireland)', label: 'IMC – Irish Medical Council' },
-  { value: 'SMC (Sweden) – Swedish Medical Council (Licensing authority for medical professionals in Sweden)', label: 'SMC (Sweden) – Swedish Medical Council' },
-  { value: 'NVMSR – Norwegian Registration Authority for Health Personnel (Medical licensing in Norway)', label: 'NVMSR – Norwegian Registration Authority for Health Personnel' },
-  { value: 'NLMC – Netherlands Medical Council (Regulatory body for medical professionals in the Netherlands)', label: 'NLMC – Netherlands Medical Council' },
-  { value: 'AMC-NZ – Medical Council of New Zealand (Regulatory body for medical professionals in New Zealand)', label: 'AMC-NZ – Medical Council of New Zealand' },
-  { value: 'Others', label: 'Others' },
-];
 
 const defaultResumeData: ResumeData = {
   personalDetails: {
@@ -220,23 +154,6 @@ export const ResumeProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   };
 
   const generateId = () => Math.random().toString(36).substr(2, 9);
-
-  // ID Type helpers
-  const getIdTypeList = () => idTypeOptions;
-  
-  const getIdDisplay = (idType: IdType, customIdType?: string) => {
-    if (idType === 'Others' && customIdType) {
-      return customIdType;
-    }
-    
-    // For regular IDs, extract just the short form for display
-    if (idType) {
-      const match = idType.match(/^([^–]+)/);
-      return match ? match[1].trim() : idType;
-    }
-    
-    return '';
-  };
 
   // Medical Education
   const addMedicalEducation = (education: Education) => {
@@ -456,9 +373,7 @@ export const ResumeProvider: React.FC<{ children: ReactNode }> = ({ children }) 
       addLanguage,
       updateLanguage,
       removeLanguage,
-      updateHobbies,
-      getIdTypeList,
-      getIdDisplay
+      updateHobbies
     }}>
       {children}
     </ResumeContext.Provider>
