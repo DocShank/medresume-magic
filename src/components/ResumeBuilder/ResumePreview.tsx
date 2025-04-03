@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Download, Eye, Linkedin } from "lucide-react";
@@ -493,58 +494,16 @@ const ResumePreview = () => {
       margin: [10, 10, 10, 10],
       filename: `${resumeData.personalDetails.firstName}_${resumeData.personalDetails.lastName}_Resume.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { 
-        scale: 2, 
-        useCORS: true, 
-        logging: false,
-        letterRendering: true
-      },
-      jsPDF: { 
-        unit: 'mm', 
-        format: 'a4', 
-        orientation: 'portrait',
-        compress: true,
-        pagesplit: true
-      },
-      pagebreak: { 
-        mode: ['css', 'legacy'],
-        before: '.page-break-before',
-        after: '.page-break-after',
-        avoid: '.avoid-page-break'
-      }
+      html2canvas: { scale: 2, useCORS: true, logging: false },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
     };
     
     toast.info("Generating PDF...");
     
-    // Apply specific PDF-rendering classes
-    const sections = element.querySelectorAll('h2, h3');
-    sections.forEach(section => {
-      section.classList.add('avoid-page-break');
-      // Add keep-with-next to keep headings with their content
-      section.classList.add('pdf-keep-with-next');
-    });
-
-    // Make sure container items stay together where possible
-    const containers = element.querySelectorAll('.mb-4, .mb-6, .mb-8');
-    containers.forEach(container => {
-      if (container.clientHeight < 150) { // Only add to reasonably sized containers
-        container.classList.add('avoid-page-break');
-      }
-    });
-    
     setTimeout(() => {
       html2pdf().set(opt).from(element).save().then(() => {
         toast.success("PDF downloaded successfully!");
-        
-        // Clean up classes after PDF generation
-        sections.forEach(section => {
-          section.classList.remove('avoid-page-break');
-          section.classList.remove('pdf-keep-with-next');
-        });
-        
-        containers.forEach(container => {
-          container.classList.remove('avoid-page-break');
-        });
       }).catch(error => {
         console.error("PDF generation failed:", error);
         toast.error("Failed to generate PDF. Please try again.");
@@ -574,23 +533,6 @@ const ResumePreview = () => {
           className="bg-white p-8 shadow-lg border rounded-lg w-full max-w-[210mm] mx-auto"
           style={{ minHeight: '29.7cm' }}
         >
-          <style>
-            {`
-              @media print {
-                .pdf-keep-with-next {
-                  page-break-after: avoid;
-                }
-                
-                h1, h2, h3, h4, h5 {
-                  page-break-after: avoid;
-                }
-                
-                .avoid-page-break {
-                  page-break-inside: avoid;
-                }
-              }
-            `}
-          </style>
           {template === 'professional' && <ProfessionalTemplate data={resumeData} />}
           {template === 'executive' && <ExecutiveTemplate data={resumeData} />}
         </div>
