@@ -6,11 +6,10 @@ const LogoAnimation = () => {
   
   useEffect(() => {
     const stageTimers = [
-      setTimeout(() => setStage(1), 300),  // Initial state - slower
-      setTimeout(() => setStage(2), 900),  // Highlight SHA - slower
-      setTimeout(() => setStage(3), 1500), // Merge SHAs - slower
-      setTimeout(() => setStage(4), 2100), // Add NK - slower
-      setTimeout(() => setStage(5), 2700)  // Add subtitle - slower
+      setTimeout(() => setStage(1), 300),  // Initial state
+      setTimeout(() => setStage(2), 900),  // Highlight SHA
+      setTimeout(() => setStage(3), 1500), // Merge SHAs
+      setTimeout(() => setStage(4), 2100), // Add NK
     ];
     
     return () => stageTimers.forEach(timer => clearTimeout(timer));
@@ -52,20 +51,9 @@ const LogoAnimation = () => {
             hank
           </span>
         )}
-        
-        {/* Subtitle fades in */}
-        {stage >= 4 && (
-          <span 
-            className={`ml-2 text-base md:text-xl lg:text-2xl font-normal
-                        ${stage === 4 ? 'animate-fade-in' : ''} transition-all duration-800 ease-in-out`}
-            style={{animationDuration: '0.8s', animationTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)'}}
-          >
-            - AI Resume Builder
-          </span>
-        )}
       </div>
       
-      {stage >= 5 && (
+      {stage >= 4 && (
         <div className="mt-2 text-sm text-center font-light animate-fade-in opacity-70" 
              style={{animationDuration: '0.8s', animationTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)'}}>
           Elevate your medical career with precision
