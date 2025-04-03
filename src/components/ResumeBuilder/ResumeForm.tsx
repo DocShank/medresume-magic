@@ -106,7 +106,6 @@ export const ResumeForm: React.FC = () => {
     updateHobbies(updatedHobbies);
   };
 
-  // Other state hooks for medical education, other education, experiences, etc.
   const [newMedicalEducation, setNewMedicalEducation] = useState<Education>({
     id: generateId(),
     institution: '',
@@ -145,7 +144,6 @@ export const ResumeForm: React.FC = () => {
     description: '',
   });
 
-  // Personal Details section
   const renderPersonalDetailsSection = () => (
     <AccordionItem value="personal-details" className="border p-4 rounded-md mb-4">
       <AccordionTrigger className="text-lg font-medium">
@@ -332,7 +330,6 @@ export const ResumeForm: React.FC = () => {
     </AccordionItem>
   );
 
-  // Medical Education section with "Other" option
   const renderMedicalEducationSection = () => {
     const [showOtherDegree, setShowOtherDegree] = useState<{[key: string]: boolean}>({});
     
@@ -363,7 +360,6 @@ export const ResumeForm: React.FC = () => {
         </AccordionTrigger>
         <AccordionContent>
           {resumeData.medicalEducation.map((education, index) => {
-            // Initialize showOtherDegree for existing items
             if (education.degree === 'Other' && !showOtherDegree[education.id]) {
               setShowOtherDegree({
                 ...showOtherDegree,
@@ -654,7 +650,6 @@ export const ResumeForm: React.FC = () => {
     );
   };
 
-  // Other Education section
   const renderOtherEducationSection = () => {
     const [showOtherDegree, setShowOtherDegree] = useState<{[key: string]: boolean}>({});
     
@@ -685,7 +680,6 @@ export const ResumeForm: React.FC = () => {
         </AccordionTrigger>
         <AccordionContent>
           {resumeData.otherEducation.map((education, index) => {
-            // Initialize showOtherDegree for existing items
             if (education.degree === 'Other' && !showOtherDegree[education.id]) {
               setShowOtherDegree({
                 ...showOtherDegree,
@@ -974,7 +968,6 @@ export const ResumeForm: React.FC = () => {
     );
   };
 
-  // Experience section with "Other" option for type
   const renderExperienceSection = () => {
     const [showOtherType, setShowOtherType] = useState<{[key: string]: boolean}>({});
     
@@ -1005,5 +998,282 @@ export const ResumeForm: React.FC = () => {
         </AccordionTrigger>
         <AccordionContent>
           {resumeData.experiences.map((experience, index) => {
-            // Initialize showOtherType for existing items
-            if (experience.type === 'Other' &&
+            if (experience.type === 'Other' && !showOtherType[experience.id]) {
+              setShowOtherType({
+                ...showOtherType,
+                [experience.id]: true
+              });
+            }
+            
+            return (
+              <div key={experience.id} className="border p-4 rounded-md mb-4">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-md font-medium">
+                    Experience {index + 1}
+                  </h3>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => removeExperience(experience.id)}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <Label htmlFor={`exp-role-${experience.id}`}>Role</Label>
+                    <Input
+                      id={`exp-role-${experience.id}`}
+                      value={experience.role}
+                      onChange={(e) => 
+                        handleExperienceChange(experience.id, 'role', e.target.value)
+                      }
+                      className="w-full"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor={`exp-department-${experience.id}`}>Department</Label>
+                    <Input
+                      id={`exp-department-${experience.id}`}
+                      value={experience.department}
+                      onChange={(e) => 
+                        handleExperienceChange(experience.id, 'department', e.target.value)
+                      }
+                      className="w-full"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor={`exp-institution-${experience.id}`}>Institution</Label>
+                    <Input
+                      id={`exp-institution-${experience.id}`}
+                      value={experience.institution}
+                      onChange={(e) => 
+                        handleExperienceChange(experience.id, 'institution', e.target.value)
+                      }
+                      className="w-full"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor={`exp-type-${experience.id}`}>Type</Label>
+                    <Select
+                      value={experience.type}
+                      onValueChange={(value) => 
+                        handleExperienceChange(experience.id, 'type', value)
+                      }
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select Type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Residency">Residency</SelectItem>
+                        <SelectItem value="Fellowship">Fellowship</SelectItem>
+                        <SelectItem value="Internship">Internship</SelectItem>
+                        <SelectItem value="Clinical">Clinical</SelectItem>
+                        <SelectItem value="Research">Research</SelectItem>
+                        <SelectItem value="Teaching">Teaching</SelectItem>
+                        <SelectItem value="Volunteer">Volunteer</SelectItem>
+                        <SelectItem value="Other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  {showOtherType[experience.id] && (
+                    <div>
+                      <Label htmlFor={`exp-type-other-${experience.id}`}>Specify Type</Label>
+                      <Input
+                        id={`exp-type-other-${experience.id}`}
+                        value={experience.typeOther || ''}
+                        onChange={(e) => 
+                          handleExperienceChange(experience.id, 'typeOther', e.target.value)
+                        }
+                        className="w-full"
+                        placeholder="Enter experience type"
+                      />
+                    </div>
+                  )}
+                  
+                  <div>
+                    <Label htmlFor={`exp-start-date-${experience.id}`}>Start Date</Label>
+                    <DateSelector
+                      id={`exp-start-date-${experience.id}`}
+                      value={experience.startDate}
+                      onChange={(value) => 
+                        handleExperienceChange(experience.id, 'startDate', value)
+                      }
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor={`exp-end-date-${experience.id}`}>End Date</Label>
+                    <DateSelector
+                      id={`exp-end-date-${experience.id}`}
+                      value={experience.endDate}
+                      onChange={(value) => 
+                        handleExperienceChange(experience.id, 'endDate', value)
+                      }
+                    />
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor={`exp-description-${experience.id}`}>Description</Label>
+                  <Textarea
+                    id={`exp-description-${experience.id}`}
+                    value={experience.description || ''}
+                    onChange={(e) => 
+                      handleExperienceChange(experience.id, 'description', e.target.value)
+                    }
+                    className="w-full"
+                  />
+                </div>
+              </div>
+            );
+          })}
+  
+          <div className="border p-4 rounded-md mb-4">
+            <h3 className="text-md font-medium mb-4">Add New Experience</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <Label htmlFor="new-exp-role">Role</Label>
+                <Input
+                  id="new-exp-role"
+                  value={newExperience.role}
+                  onChange={(e) => 
+                    handleNewExperienceChange('role', e.target.value)
+                  }
+                  className="w-full"
+                />
+              </div>
+              <div>
+                <Label htmlFor="new-exp-department">Department</Label>
+                <Input
+                  id="new-exp-department"
+                  value={newExperience.department}
+                  onChange={(e) => 
+                    handleNewExperienceChange('department', e.target.value)
+                  }
+                  className="w-full"
+                />
+              </div>
+              <div>
+                <Label htmlFor="new-exp-institution">Institution</Label>
+                <Input
+                  id="new-exp-institution"
+                  value={newExperience.institution}
+                  onChange={(e) => 
+                    handleNewExperienceChange('institution', e.target.value)
+                  }
+                  className="w-full"
+                />
+              </div>
+              <div>
+                <Label htmlFor="new-exp-type">Type</Label>
+                <Select
+                  value={newExperience.type}
+                  onValueChange={(value) => 
+                    handleNewExperienceChange('type', value)
+                  }
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select Type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Residency">Residency</SelectItem>
+                    <SelectItem value="Fellowship">Fellowship</SelectItem>
+                    <SelectItem value="Internship">Internship</SelectItem>
+                    <SelectItem value="Clinical">Clinical</SelectItem>
+                    <SelectItem value="Research">Research</SelectItem>
+                    <SelectItem value="Teaching">Teaching</SelectItem>
+                    <SelectItem value="Volunteer">Volunteer</SelectItem>
+                    <SelectItem value="Other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              {showOtherType['new'] && (
+                <div>
+                  <Label htmlFor="new-exp-type-other">Specify Type</Label>
+                  <Input
+                    id="new-exp-type-other"
+                    value={newExperience.typeOther || ''}
+                    onChange={(e) => 
+                      handleNewExperienceChange('typeOther', e.target.value)
+                    }
+                    className="w-full"
+                    placeholder="Enter experience type"
+                  />
+                </div>
+              )}
+              
+              <div>
+                <Label htmlFor="new-exp-start-date">Start Date</Label>
+                <DateSelector
+                  id="new-exp-start-date"
+                  value={newExperience.startDate}
+                  onChange={(value) => 
+                    handleNewExperienceChange('startDate', value)
+                  }
+                />
+              </div>
+              <div>
+                <Label htmlFor="new-exp-end-date">End Date</Label>
+                <DateSelector
+                  id="new-exp-end-date"
+                  value={newExperience.endDate}
+                  onChange={(value) => 
+                    handleNewExperienceChange('endDate', value)
+                  }
+                />
+              </div>
+            </div>
+            <div className="mb-4">
+              <Label htmlFor="new-exp-description">Description</Label>
+              <Textarea
+                id="new-exp-description"
+                value={newExperience.description || ''}
+                onChange={(e) => 
+                  handleNewExperienceChange('description', e.target.value)
+                }
+                className="w-full"
+              />
+            </div>
+            <Button 
+              onClick={() => {
+                addExperience(newExperience);
+                setNewExperience({
+                  id: generateId(),
+                  role: '',
+                  department: '',
+                  institution: '',
+                  startDate: '',
+                  endDate: '',
+                  type: '',
+                  typeOther: '',
+                  description: '',
+                });
+                setShowOtherType({
+                  ...showOtherType,
+                  'new': false
+                });
+              }}
+              disabled={!newExperience.role || 
+                !newExperience.institution || 
+                !newExperience.startDate ||
+                !newExperience.type
+              }
+            >
+              Add Experience
+            </Button>
+          </div>
+        </AccordionContent>
+      </AccordionItem>
+    );
+  };
+
+  return (
+    <Accordion type="multiple" defaultValue={["personal-details"]} className="px-6 py-8">
+      {renderPersonalDetailsSection()}
+      {renderMedicalEducationSection()}
+      {renderOtherEducationSection()}
+      {renderExperienceSection()}
+    </Accordion>
+  );
+};
