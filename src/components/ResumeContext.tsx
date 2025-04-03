@@ -7,6 +7,7 @@ export type Education = {
   institution: string;
   location: string;
   degree: string;
+  degreeOther?: string;
   startDate: string;
   endDate: string;
   graduationYear: string;
@@ -22,6 +23,7 @@ export type Experience = {
   startDate: string;
   endDate: string;
   type: string;
+  typeOther?: string;
   description: string;
 };
 
@@ -124,8 +126,6 @@ const defaultResumeData: ResumeData = {
     lastName: '',
     hasAccreditedId: false,
     linkedinUrl: '',
-    idType: '',
-    idTypeOther: '',
   },
   medicalEducation: [],
   otherEducation: [],

@@ -47,6 +47,8 @@ export const parseISODate = (isoString: string): Date | null => {
   return isNaN(date.getTime()) ? null : date;
 };
 
+export const generateId = () => Math.random().toString(36).substr(2, 9);
+
 export const hobbiesOptions = [
   'Reading', 'Writing', 'Hiking', 'Photography', 'Cooking', 'Baking',
   'Traveling', 'Swimming', 'Running', 'Cycling', 'Yoga', 'Meditation',
@@ -108,14 +110,14 @@ export const degreeOptions = [
   'MBBS', 'MD', 'MS', 'DM', 'MCh', 'DNB', 'FRCS', 'MRCP', 'MPH', 'PhD',
   'DrPH', 'DO', 'MSc', 'MPhil', 'BDS', 'DDS', 'DMD', 'PharmD',
   'BSc', 'BA', 'BBA', 'MBA', 'MHA', 'MPH', 'BN', 'RN', 'BSN',
-  'MBCHB', 'MBBCh', 'MBBCh BAO'
+  'MBCHB', 'MBBCh', 'MBBCh BAO', 'Other'
 ];
 
 export const jobTypeOptions = [
   'Full-Time', 'Part-Time', 'Fellowship', 'Clinical Observership',
   'Research Scholar', 'Research Fellow', 'Residency', 'Internship',
   'Visiting Physician', 'Consultant', 'Locum', 'Contract',
-  'Temporary', 'Permanent', 'Remote', 'Hybrid'
+  'Temporary', 'Permanent', 'Remote', 'Hybrid', 'Other'
 ];
 
 export const validateEmail = (email: string) => {
