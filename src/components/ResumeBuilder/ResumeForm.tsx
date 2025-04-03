@@ -31,7 +31,7 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
 import { Label } from '@/components/ui/label';
-import DateSelector from './DateSelector';
+import { DateSelector } from './DateSelector';
 import { Education, Experience } from './ResumeContext';
 import { X, Plus, ArrowDown, ArrowUp } from 'lucide-react';
 import { generateId } from './utils';
@@ -106,6 +106,7 @@ export const ResumeForm: React.FC = () => {
     updateHobbies(updatedHobbies);
   };
 
+  // Other state hooks for medical education, other education, experiences, etc.
   const [newMedicalEducation, setNewMedicalEducation] = useState<Education>({
     id: generateId(),
     institution: '',
@@ -144,6 +145,7 @@ export const ResumeForm: React.FC = () => {
     description: '',
   });
 
+  // Personal Details section
   const renderPersonalDetailsSection = () => (
     <AccordionItem value="personal-details" className="border p-4 rounded-md mb-4">
       <AccordionTrigger className="text-lg font-medium">
@@ -330,6 +332,7 @@ export const ResumeForm: React.FC = () => {
     </AccordionItem>
   );
 
+  // Medical Education section with "Other" option
   const renderMedicalEducationSection = () => {
     const [showOtherDegree, setShowOtherDegree] = useState<{[key: string]: boolean}>({});
     
@@ -360,6 +363,7 @@ export const ResumeForm: React.FC = () => {
         </AccordionTrigger>
         <AccordionContent>
           {resumeData.medicalEducation.map((education, index) => {
+            // Initialize showOtherDegree for existing items
             if (education.degree === 'Other' && !showOtherDegree[education.id]) {
               setShowOtherDegree({
                 ...showOtherDegree,
@@ -650,6 +654,7 @@ export const ResumeForm: React.FC = () => {
     );
   };
 
+  // Other Education section
   const renderOtherEducationSection = () => {
     const [showOtherDegree, setShowOtherDegree] = useState<{[key: string]: boolean}>({});
     
@@ -680,6 +685,7 @@ export const ResumeForm: React.FC = () => {
         </AccordionTrigger>
         <AccordionContent>
           {resumeData.otherEducation.map((education, index) => {
+            // Initialize showOtherDegree for existing items
             if (education.degree === 'Other' && !showOtherDegree[education.id]) {
               setShowOtherDegree({
                 ...showOtherDegree,
@@ -968,6 +974,7 @@ export const ResumeForm: React.FC = () => {
     );
   };
 
+  // Experience section with "Other" option for type
   const renderExperienceSection = () => {
     const [showOtherType, setShowOtherType] = useState<{[key: string]: boolean}>({});
     
@@ -998,6 +1005,7 @@ export const ResumeForm: React.FC = () => {
         </AccordionTrigger>
         <AccordionContent>
           {resumeData.experiences.map((experience, index) => {
+            // Initialize showOtherType for existing items
             if (experience.type === 'Other' && !showOtherType[experience.id]) {
               setShowOtherType({
                 ...showOtherType,
@@ -1021,7 +1029,7 @@ export const ResumeForm: React.FC = () => {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                   <div>
-                    <Label htmlFor={`exp-role-${experience.id}`}>Role</Label>
+                    <Label htmlFor={`exp-role-${experience.id}`}>Role/Position</Label>
                     <Input
                       id={`exp-role-${experience.id}`}
                       value={experience.role}
@@ -1065,12 +1073,12 @@ export const ResumeForm: React.FC = () => {
                         <SelectValue placeholder="Select Type" />
                       </SelectTrigger>
                       <SelectContent>
+                        <SelectItem value="Full-time">Full-time</SelectItem>
+                        <SelectItem value="Part-time">Part-time</SelectItem>
+                        <SelectItem value="Contract">Contract</SelectItem>
+                        <SelectItem value="Internship">Internship</SelectItem>
                         <SelectItem value="Residency">Residency</SelectItem>
                         <SelectItem value="Fellowship">Fellowship</SelectItem>
-                        <SelectItem value="Internship">Internship</SelectItem>
-                        <SelectItem value="Clinical">Clinical</SelectItem>
-                        <SelectItem value="Research">Research</SelectItem>
-                        <SelectItem value="Teaching">Teaching</SelectItem>
                         <SelectItem value="Volunteer">Volunteer</SelectItem>
                         <SelectItem value="Other">Other</SelectItem>
                       </SelectContent>
@@ -1087,7 +1095,7 @@ export const ResumeForm: React.FC = () => {
                           handleExperienceChange(experience.id, 'typeOther', e.target.value)
                         }
                         className="w-full"
-                        placeholder="Enter experience type"
+                        placeholder="Enter employment type"
                       />
                     </div>
                   )}
@@ -1113,11 +1121,11 @@ export const ResumeForm: React.FC = () => {
                     />
                   </div>
                 </div>
-                <div>
+                <div className="mb-4">
                   <Label htmlFor={`exp-description-${experience.id}`}>Description</Label>
                   <Textarea
                     id={`exp-description-${experience.id}`}
-                    value={experience.description || ''}
+                    value={experience.description}
                     onChange={(e) => 
                       handleExperienceChange(experience.id, 'description', e.target.value)
                     }
@@ -1132,7 +1140,7 @@ export const ResumeForm: React.FC = () => {
             <h3 className="text-md font-medium mb-4">Add New Experience</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
-                <Label htmlFor="new-exp-role">Role</Label>
+                <Label htmlFor="new-exp-role">Role/Position</Label>
                 <Input
                   id="new-exp-role"
                   value={newExperience.role}
@@ -1176,12 +1184,12 @@ export const ResumeForm: React.FC = () => {
                     <SelectValue placeholder="Select Type" />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="Full-time">Full-time</SelectItem>
+                    <SelectItem value="Part-time">Part-time</SelectItem>
+                    <SelectItem value="Contract">Contract</SelectItem>
+                    <SelectItem value="Internship">Internship</SelectItem>
                     <SelectItem value="Residency">Residency</SelectItem>
                     <SelectItem value="Fellowship">Fellowship</SelectItem>
-                    <SelectItem value="Internship">Internship</SelectItem>
-                    <SelectItem value="Clinical">Clinical</SelectItem>
-                    <SelectItem value="Research">Research</SelectItem>
-                    <SelectItem value="Teaching">Teaching</SelectItem>
                     <SelectItem value="Volunteer">Volunteer</SelectItem>
                     <SelectItem value="Other">Other</SelectItem>
                   </SelectContent>
@@ -1198,7 +1206,7 @@ export const ResumeForm: React.FC = () => {
                       handleNewExperienceChange('typeOther', e.target.value)
                     }
                     className="w-full"
-                    placeholder="Enter experience type"
+                    placeholder="Enter employment type"
                   />
                 </div>
               )}
@@ -1228,7 +1236,7 @@ export const ResumeForm: React.FC = () => {
               <Label htmlFor="new-exp-description">Description</Label>
               <Textarea
                 id="new-exp-description"
-                value={newExperience.description || ''}
+                value={newExperience.description}
                 onChange={(e) => 
                   handleNewExperienceChange('description', e.target.value)
                 }
@@ -1256,8 +1264,7 @@ export const ResumeForm: React.FC = () => {
               }}
               disabled={!newExperience.role || 
                 !newExperience.institution || 
-                !newExperience.startDate ||
-                !newExperience.type
+                !newExperience.startDate
               }
             >
               Add Experience
@@ -1268,12 +1275,691 @@ export const ResumeForm: React.FC = () => {
     );
   };
 
+  // Awards section
+  const renderAwardsSection = () => {
+    const [newAward, setNewAward] = useState({
+      id: generateId(),
+      title: '',
+      organization: '',
+      date: '',
+      description: '',
+    });
+
+    const handleAwardChange = (id: string, field: string, value: any) => {
+      updateAward(id, { [field]: value });
+    };
+
+    const handleNewAwardChange = (field: string, value: any) => {
+      setNewAward({ ...newAward, [field]: value });
+    };
+
+    return (
+      <AccordionItem value="awards" className="border p-4 rounded-md mb-4">
+        <AccordionTrigger className="text-lg font-medium">
+          Awards & Honors
+        </AccordionTrigger>
+        <AccordionContent>
+          {resumeData.awards.map((award, index) => (
+            <div key={award.id} className="border p-4 rounded-md mb-4">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-md font-medium">
+                  Award {index + 1}
+                </h3>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => removeAward(award.id)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                  <Label htmlFor={`award-title-${award.id}`}>Title</Label>
+                  <Input
+                    id={`award-title-${award.id}`}
+                    value={award.title}
+                    onChange={(e) => 
+                      handleAwardChange(award.id, 'title', e.target.value)
+                    }
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor={`award-organization-${award.id}`}>Organization</Label>
+                  <Input
+                    id={`award-organization-${award.id}`}
+                    value={award.organization}
+                    onChange={(e) => 
+                      handleAwardChange(award.id, 'organization', e.target.value)
+                    }
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor={`award-date-${award.id}`}>Date</Label>
+                  <DateSelector
+                    id={`award-date-${award.id}`}
+                    value={award.date}
+                    onChange={(value) => 
+                      handleAwardChange(award.id, 'date', value)
+                    }
+                  />
+                </div>
+              </div>
+              <div className="mb-4">
+                <Label htmlFor={`award-description-${award.id}`}>Description</Label>
+                <Textarea
+                  id={`award-description-${award.id}`}
+                  value={award.description}
+                  onChange={(e) => 
+                    handleAwardChange(award.id, 'description', e.target.value)
+                  }
+                  className="w-full"
+                />
+              </div>
+            </div>
+          ))}
+
+          <div className="border p-4 rounded-md mb-4">
+            <h3 className="text-md font-medium mb-4">Add New Award</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <Label htmlFor="new-award-title">Title</Label>
+                <Input
+                  id="new-award-title"
+                  value={newAward.title}
+                  onChange={(e) => 
+                    handleNewAwardChange('title', e.target.value)
+                  }
+                  className="w-full"
+                />
+              </div>
+              <div>
+                <Label htmlFor="new-award-organization">Organization</Label>
+                <Input
+                  id="new-award-organization"
+                  value={newAward.organization}
+                  onChange={(e) => 
+                    handleNewAwardChange('organization', e.target.value)
+                  }
+                  className="w-full"
+                />
+              </div>
+              <div>
+                <Label htmlFor="new-award-date">Date</Label>
+                <DateSelector
+                  id="new-award-date"
+                  value={newAward.date}
+                  onChange={(value) => 
+                    handleNewAwardChange('date', value)
+                  }
+                />
+              </div>
+            </div>
+            <div className="mb-4">
+              <Label htmlFor="new-award-description">Description</Label>
+              <Textarea
+                id="new-award-description"
+                value={newAward.description}
+                onChange={(e) => 
+                  handleNewAwardChange('description', e.target.value)
+                }
+                className="w-full"
+              />
+            </div>
+            <Button 
+              onClick={() => {
+                addAward(newAward);
+                setNewAward({
+                  id: generateId(),
+                  title: '',
+                  organization: '',
+                  date: '',
+                  description: '',
+                });
+              }}
+              disabled={!newAward.title}
+            >
+              Add Award
+            </Button>
+          </div>
+        </AccordionContent>
+      </AccordionItem>
+    );
+  };
+
+  // Publications section with improved text input format
+  const renderPublicationsSection = () => {
+    const [newPublication, setNewPublication] = useState({
+      id: generateId(),
+      authors: '',
+      title: '',
+      journal: '',
+      date: '',
+      doi: '',
+    });
+
+    const handlePublicationChange = (id: string, field: string, value: any) => {
+      updatePublication(id, { [field]: value });
+    };
+
+    const handleNewPublicationChange = (field: string, value: any) => {
+      setNewPublication({ ...newPublication, [field]: value });
+    };
+
+    return (
+      <AccordionItem value="publications" className="border p-4 rounded-md mb-4">
+        <AccordionTrigger className="text-lg font-medium">
+          Publications
+        </AccordionTrigger>
+        <AccordionContent>
+          <div className="mb-4">
+            <div className="flex items-center space-x-2 mb-2">
+              <Label className="text-md font-medium">Manual Entry Format</Label>
+            </div>
+            <p className="text-sm text-gray-600 mb-4">
+              Enter your publications in the text area below. Please enter one publication per line for better formatting.
+            </p>
+            <Textarea
+              value={resumeData.publicationsText || ''}
+              onChange={(e) => updatePublicationsText(e.target.value)}
+              className="w-full min-h-[200px]"
+              placeholder="Enter each publication on a new line. For example:&#10;Smith J, Jones A, et al. Title of Paper 1. Journal of Medicine. 2020;10(2):123-135.&#10;Jones A, Smith J, et al. Title of Paper 2. Journal of Surgery. 2021;15(4):243-250."
+            />
+          </div>
+
+          <Separator className="my-6" />
+
+          <div className="mb-4">
+            <div className="flex items-center space-x-2 mb-2">
+              <Label className="text-md font-medium">Structured Entry Format</Label>
+            </div>
+            
+            {resumeData.publications.map((publication, index) => (
+              <div key={publication.id} className="border p-4 rounded-md mb-4">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-md font-medium">
+                    Publication {index + 1}
+                  </h3>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => removePublication(publication.id)}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <Label htmlFor={`pub-authors-${publication.id}`}>Authors</Label>
+                    <Input
+                      id={`pub-authors-${publication.id}`}
+                      value={publication.authors}
+                      onChange={(e) => 
+                        handlePublicationChange(publication.id, 'authors', e.target.value)
+                      }
+                      className="w-full"
+                      placeholder="e.g., Smith J, Jones A, et al."
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor={`pub-title-${publication.id}`}>Title</Label>
+                    <Input
+                      id={`pub-title-${publication.id}`}
+                      value={publication.title}
+                      onChange={(e) => 
+                        handlePublicationChange(publication.id, 'title', e.target.value)
+                      }
+                      className="w-full"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor={`pub-journal-${publication.id}`}>Journal</Label>
+                    <Input
+                      id={`pub-journal-${publication.id}`}
+                      value={publication.journal}
+                      onChange={(e) => 
+                        handlePublicationChange(publication.id, 'journal', e.target.value)
+                      }
+                      className="w-full"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor={`pub-date-${publication.id}`}>Date</Label>
+                    <DateSelector
+                      id={`pub-date-${publication.id}`}
+                      value={publication.date}
+                      onChange={(value) => 
+                        handlePublicationChange(publication.id, 'date', value)
+                      }
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor={`pub-doi-${publication.id}`}>DOI</Label>
+                    <Input
+                      id={`pub-doi-${publication.id}`}
+                      value={publication.doi}
+                      onChange={(e) => 
+                        handlePublicationChange(publication.id, 'doi', e.target.value)
+                      }
+                      className="w-full"
+                      placeholder="e.g., 10.1000/xyz123"
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+            
+            <div className="border p-4 rounded-md mb-4">
+              <h3 className="text-md font-medium mb-4">Add New Publication</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                  <Label htmlFor="new-pub-authors">Authors</Label>
+                  <Input
+                    id="new-pub-authors"
+                    value={newPublication.authors}
+                    onChange={(e) => 
+                      handleNewPublicationChange('authors', e.target.value)
+                    }
+                    className="w-full"
+                    placeholder="e.g., Smith J, Jones A, et al."
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="new-pub-title">Title</Label>
+                  <Input
+                    id="new-pub-title"
+                    value={newPublication.title}
+                    onChange={(e) => 
+                      handleNewPublicationChange('title', e.target.value)
+                    }
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="new-pub-journal">Journal</Label>
+                  <Input
+                    id="new-pub-journal"
+                    value={newPublication.journal}
+                    onChange={(e) => 
+                      handleNewPublicationChange('journal', e.target.value)
+                    }
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="new-pub-date">Date</Label>
+                  <DateSelector
+                    id="new-pub-date"
+                    value={newPublication.date}
+                    onChange={(value) => 
+                      handleNewPublicationChange('date', value)
+                    }
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="new-pub-doi">DOI</Label>
+                  <Input
+                    id="new-pub-doi"
+                    value={newPublication.doi}
+                    onChange={(e) => 
+                      handleNewPublicationChange('doi', e.target.value)
+                    }
+                    className="w-full"
+                    placeholder="e.g., 10.1000/xyz123"
+                  />
+                </div>
+              </div>
+              <Button 
+                onClick={() => {
+                  addPublication(newPublication);
+                  setNewPublication({
+                    id: generateId(),
+                    authors: '',
+                    title: '',
+                    journal: '',
+                    date: '',
+                    doi: '',
+                  });
+                }}
+                disabled={!newPublication.title || !newPublication.authors}
+              >
+                Add Publication
+              </Button>
+            </div>
+          </div>
+        </AccordionContent>
+      </AccordionItem>
+    );
+  };
+
+  // Memberships section
+  const renderMembershipsSection = () => {
+    const [newMembership, setNewMembership] = useState({
+      id: generateId(),
+      name: '',
+      issueDate: '',
+      expiryDate: '',
+      issuedBy: '',
+      remarks: '',
+    });
+
+    const handleMembershipChange = (id: string, field: string, value: any) => {
+      updateMembership(id, { [field]: value });
+    };
+
+    const handleNewMembershipChange = (field: string, value: any) => {
+      setNewMembership({ ...newMembership, [field]: value });
+    };
+
+    return (
+      <AccordionItem value="memberships" className="border p-4 rounded-md mb-4">
+        <AccordionTrigger className="text-lg font-medium">
+          Memberships
+        </AccordionTrigger>
+        <AccordionContent>
+          {resumeData.memberships.map((membership, index) => (
+            <div key={membership.id} className="border p-4 rounded-md mb-4">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-md font-medium">
+                  Membership {index + 1}
+                </h3>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => removeMembership(membership.id)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                  <Label htmlFor={`mem-name-${membership.id}`}>Name</Label>
+                  <Input
+                    id={`mem-name-${membership.id}`}
+                    value={membership.name}
+                    onChange={(e) => 
+                      handleMembershipChange(membership.id, 'name', e.target.value)
+                    }
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor={`mem-issued-by-${membership.id}`}>Issued By</Label>
+                  <Input
+                    id={`mem-issued-by-${membership.id}`}
+                    value={membership.issuedBy || ''}
+                    onChange={(e) => 
+                      handleMembershipChange(membership.id, 'issuedBy', e.target.value)
+                    }
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor={`mem-issue-date-${membership.id}`}>Issue Date</Label>
+                  <DateSelector
+                    id={`mem-issue-date-${membership.id}`}
+                    value={membership.issueDate}
+                    onChange={(value) => 
+                      handleMembershipChange(membership.id, 'issueDate', value)
+                    }
+                  />
+                </div>
+                <div>
+                  <Label htmlFor={`mem-expiry-date-${membership.id}`}>Expiry Date (if applicable)</Label>
+                  <DateSelector
+                    id={`mem-expiry-date-${membership.id}`}
+                    value={membership.expiryDate || ''}
+                    onChange={(value) => 
+                      handleMembershipChange(membership.id, 'expiryDate', value)
+                    }
+                  />
+                </div>
+              </div>
+              <div className="mb-4">
+                <Label htmlFor={`mem-remarks-${membership.id}`}>Remarks</Label>
+                <Textarea
+                  id={`mem-remarks-${membership.id}`}
+                  value={membership.remarks}
+                  onChange={(e) => 
+                    handleMembershipChange(membership.id, 'remarks', e.target.value)
+                  }
+                  className="w-full"
+                />
+              </div>
+            </div>
+          ))}
+
+          <div className="border p-4 rounded-md mb-4">
+            <h3 className="text-md font-medium mb-4">Add New Membership</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <Label htmlFor="new-mem-name">Name</Label>
+                <Input
+                  id="new-mem-name"
+                  value={newMembership.name}
+                  onChange={(e) => 
+                    handleNewMembershipChange('name', e.target.value)
+                  }
+                  className="w-full"
+                />
+              </div>
+              <div>
+                <Label htmlFor="new-mem-issued-by">Issued By</Label>
+                <Input
+                  id="new-mem-issued-by"
+                  value={newMembership.issuedBy || ''}
+                  onChange={(e) => 
+                    handleNewMembershipChange('issuedBy', e.target.value)
+                  }
+                  className="w-full"
+                />
+              </div>
+              <div>
+                <Label htmlFor="new-mem-issue-date">Issue Date</Label>
+                <DateSelector
+                  id="new-mem-issue-date"
+                  value={newMembership.issueDate}
+                  onChange={(value) => 
+                    handleNewMembershipChange('issueDate', value)
+                  }
+                />
+              </div>
+              <div>
+                <Label htmlFor="new-mem-expiry-date">Expiry Date (if applicable)</Label>
+                <DateSelector
+                  id="new-mem-expiry-date"
+                  value={newMembership.expiryDate || ''}
+                  onChange={(value) => 
+                    handleNewMembershipChange('expiryDate', value)
+                  }
+                />
+              </div>
+            </div>
+            <div className="mb-4">
+              <Label htmlFor="new-mem-remarks">Remarks</Label>
+              <Textarea
+                id="new-mem-remarks"
+                value={newMembership.remarks}
+                onChange={(e) => 
+                  handleNewMembershipChange('remarks', e.target.value)
+                }
+                className="w-full"
+              />
+            </div>
+            <Button 
+              onClick={() => {
+                addMembership(newMembership);
+                setNewMembership({
+                  id: generateId(),
+                  name: '',
+                  issueDate: '',
+                  expiryDate: '',
+                  issuedBy: '',
+                  remarks: '',
+                });
+              }}
+              disabled={!newMembership.name || !newMembership.issueDate}
+            >
+              Add Membership
+            </Button>
+          </div>
+        </AccordionContent>
+      </AccordionItem>
+    );
+  };
+
+  // Languages section
+  const renderLanguagesSection = () => {
+    const [newLanguage, setNewLanguage] = useState({
+      id: generateId(),
+      name: '',
+      proficiency: 'Intermediate' as 'Native' | 'Fluent' | 'Intermediate' | 'Basic',
+    });
+
+    const handleLanguageChange = (id: string, field: string, value: any) => {
+      updateLanguage(id, { [field]: value });
+    };
+
+    const handleNewLanguageChange = (field: string, value: any) => {
+      setNewLanguage({ ...newLanguage, [field]: value });
+    };
+
+    return (
+      <AccordionItem value="languages" className="border p-4 rounded-md mb-4">
+        <AccordionTrigger className="text-lg font-medium">
+          Languages
+        </AccordionTrigger>
+        <AccordionContent>
+          <div className="flex flex-wrap gap-2 mb-4">
+            {resumeData.languages.map((language) => (
+              <div key={language.id} className="flex items-center bg-gray-100 rounded-full px-3 py-1">
+                <span>{language.name} - {language.proficiency}</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 w-6 p-0 ml-1"
+                  onClick={() => removeLanguage(language.id)}
+                >
+                  <X className="h-3 w-3" />
+                </Button>
+              </div>
+            ))}
+          </div>
+
+          <div className="border p-4 rounded-md mb-4">
+            <h3 className="text-md font-medium mb-4">Add New Language</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <Label htmlFor="new-lang-name">Language</Label>
+                <Input
+                  id="new-lang-name"
+                  value={newLanguage.name}
+                  onChange={(e) => 
+                    handleNewLanguageChange('name', e.target.value)
+                  }
+                  className="w-full"
+                />
+              </div>
+              <div>
+                <Label htmlFor="new-lang-proficiency">Proficiency</Label>
+                <Select
+                  value={newLanguage.proficiency}
+                  onValueChange={(value: 'Native' | 'Fluent' | 'Intermediate' | 'Basic') => 
+                    handleNewLanguageChange('proficiency', value)
+                  }
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select Proficiency" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Native">Native</SelectItem>
+                    <SelectItem value="Fluent">Fluent</SelectItem>
+                    <SelectItem value="Intermediate">Intermediate</SelectItem>
+                    <SelectItem value="Basic">Basic</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <Button 
+              onClick={() => {
+                addLanguage(newLanguage);
+                setNewLanguage({
+                  id: generateId(),
+                  name: '',
+                  proficiency: 'Intermediate',
+                });
+              }}
+              disabled={!newLanguage.name}
+            >
+              Add Language
+            </Button>
+          </div>
+        </AccordionContent>
+      </AccordionItem>
+    );
+  };
+
+  // Hobbies section
+  const renderHobbiesSection = () => {
+    return (
+      <AccordionItem value="hobbies" className="border p-4 rounded-md mb-4">
+        <AccordionTrigger className="text-lg font-medium">
+          Hobbies & Interests
+        </AccordionTrigger>
+        <AccordionContent>
+          <div className="flex flex-wrap gap-2 mb-4">
+            {hobbies.map((hobby, index) => (
+              <div key={index} className="flex items-center bg-gray-100 rounded-full px-3 py-1">
+                <span>{hobby}</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 w-6 p-0 ml-1"
+                  onClick={() => handleRemoveHobby(hobby)}
+                >
+                  <X className="h-3 w-3" />
+                </Button>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex gap-2 mb-4">
+            <Input
+              value={newHobby}
+              onChange={(e) => setNewHobby(e.target.value)}
+              placeholder="Add a hobby or interest"
+              className="flex-1"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  handleAddHobby();
+                }
+              }}
+            />
+            <Button onClick={handleAddHobby} disabled={!newHobby.trim()}>
+              Add
+            </Button>
+          </div>
+        </AccordionContent>
+      </AccordionItem>
+    );
+  };
+
   return (
-    <Accordion type="multiple" defaultValue={["personal-details"]} className="px-6 py-8">
-      {renderPersonalDetailsSection()}
-      {renderMedicalEducationSection()}
-      {renderOtherEducationSection()}
-      {renderExperienceSection()}
-    </Accordion>
+    <div className="w-full max-w-4xl mx-auto p-4">
+      <Accordion type="multiple" defaultValue={['personal-details']} className="w-full">
+        {renderPersonalDetailsSection()}
+        {renderMedicalEducationSection()}
+        {renderOtherEducationSection()}
+        {renderExperienceSection()}
+        {renderAwardsSection()}
+        {renderPublicationsSection()}
+        {renderMembershipsSection()}
+        {renderLanguagesSection()}
+        {renderHobbiesSection()}
+      </Accordion>
+    </div>
   );
 };
