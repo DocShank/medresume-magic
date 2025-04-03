@@ -1,48 +1,66 @@
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useResume } from './ResumeContext';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { Textarea } from '@/components/ui/textarea';
-import {
+import { 
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/components/ui/accordion';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Separator } from '@/components/ui/separator';
-import { Label } from '@/components/ui/label';
-import { DateSelector } from './DateSelector';
-import { Education, Experience } from './ResumeContext';
-import { X, Plus, ArrowDown, ArrowUp } from 'lucide-react';
-import { generateId } from './utils';
+} from "@/components/ui/accordion";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { useResume } from './ResumeContext';
+import { 
+  User, 
+  GraduationCap, 
+  Award, 
+  Briefcase, 
+  FileText, 
+  Heart, 
+  Languages, 
+  Plus,
+  X,
+  Calendar,
+  BookOpen
+} from "lucide-react";
+import { 
+  hobbiesOptions, 
+  languageOptions, 
+  degreeOptions, 
+  jobTypeOptions, 
+  idTypeOptions,
+  validateEmail, 
+  validatePhoneNumber 
+} from './utils';
 
-const formSchema = z.object({
-  // Form schema remains the same
-});
+const proficiencyOptions = ['Native', 'Fluent', 'Intermediate', 'Basic'];
 
-export const ResumeForm: React.FC = () => {
-  const {
-    resumeData,
+const extendedIdTypeOptions = [
+  "NMC", // Nepal Medical Council
+  "GMC", // General Medical Council (UK)
+  "USMLE", // United States Medical Licensing Examination
+  "MCI", // Medical Council of India
+  "AMC", // Australian Medical Council
+  "HPCSA", // Health Professions Council of South Africa
+  "PMDC", // Pakistan Medical and Dental Council
+  "SMC", // Singapore Medical Council
+  "BMDC", // Bangladesh Medical and Dental Council
+  "SLMC", // Sri Lanka Medical Council
+  "MMC", // Malaysian Medical Council
+  "Other"
+];
+
+const ResumeForm = () => {
+  const { 
+    resumeData, 
     updatePersonalDetails,
     addMedicalEducation,
     updateMedicalEducation,
@@ -66,1566 +84,523 @@ export const ResumeForm: React.FC = () => {
     addLanguage,
     updateLanguage,
     removeLanguage,
-    updateHobbies,
+    updateHobbies
   } = useResume();
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      // Default values remain the same
-    },
-  });
-
-  const [newHobby, setNewHobby] = useState<string>('');
-  const [hobbies, setHobbies] = useState<string[]>(resumeData.hobbies || []);
-  const [showOtherIdType, setShowOtherIdType] = useState<boolean>(
-    resumeData.personalDetails.idType === 'Other'
-  );
   
-  const handlePersonalDetailsChange = (field: string, value: any) => {
-    if (field === 'idType') {
-      setShowOtherIdType(value === 'Other');
-      updatePersonalDetails({ [field]: value });
-    } else {
-      updatePersonalDetails({ [field]: value });
+  const [detailedPublications, setDetailedPublications] = useState(true);
+  const [customHobby, setCustomHobby] = useState('');
+  const [customLanguage, setCustomLanguage] = useState('');
+  const [selectedHobbies, setSelectedHobbies] = useState<string[]>(resumeData.hobbies || []);
+  
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        updatePersonalDetails({ photoUrl: reader.result as string });
+        toast.success("Profile photo updated successfully");
+      };
+      reader.readAsDataURL(file);
     }
   };
-
-  const handleAddHobby = () => {
-    if (newHobby.trim()) {
-      const updatedHobbies = [...hobbies, newHobby.trim()];
-      setHobbies(updatedHobbies);
-      updateHobbies(updatedHobbies);
-      setNewHobby('');
-    }
-  };
-
-  const handleRemoveHobby = (hobbyToRemove: string) => {
-    const updatedHobbies = hobbies.filter(hobby => hobby !== hobbyToRemove);
-    setHobbies(updatedHobbies);
-    updateHobbies(updatedHobbies);
-  };
-
-  // Other state hooks for medical education, other education, experiences, etc.
-  const [newMedicalEducation, setNewMedicalEducation] = useState<Education>({
-    id: generateId(),
-    institution: '',
-    location: '',
-    degree: '',
-    degreeOther: '',
-    startDate: '',
-    endDate: '',
-    graduationYear: '',
-    score: '',
-    remarks: '',
-  });
-
-  const [newOtherEducation, setNewOtherEducation] = useState<Education>({
-    id: generateId(),
-    institution: '',
-    location: '',
-    degree: '',
-    degreeOther: '',
-    startDate: '',
-    endDate: '',
-    graduationYear: '',
-    score: '',
-    remarks: '',
-  });
-
-  const [newExperience, setNewExperience] = useState<Experience>({
-    id: generateId(),
-    role: '',
-    department: '',
-    institution: '',
-    startDate: '',
-    endDate: '',
-    type: '',
-    typeOther: '',
-    description: '',
-  });
-
-  // Personal Details section
-  const renderPersonalDetailsSection = () => (
-    <AccordionItem value="personal-details" className="border p-4 rounded-md mb-4">
-      <AccordionTrigger className="text-lg font-medium">
-        Personal Details
-      </AccordionTrigger>
-      <AccordionContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          <div>
-            <Label htmlFor="firstName">First Name *</Label>
-            <Input
-              id="firstName"
-              value={resumeData.personalDetails.firstName || ''}
-              onChange={(e) => handlePersonalDetailsChange('firstName', e.target.value)}
-              className="w-full"
-              required
-            />
-          </div>
-          <div>
-            <Label htmlFor="middleName">Middle Name</Label>
-            <Input
-              id="middleName"
-              value={resumeData.personalDetails.middleName || ''}
-              onChange={(e) => handlePersonalDetailsChange('middleName', e.target.value)}
-              className="w-full"
-            />
-          </div>
-          <div>
-            <Label htmlFor="lastName">Last Name *</Label>
-            <Input
-              id="lastName"
-              value={resumeData.personalDetails.lastName || ''}
-              onChange={(e) => handlePersonalDetailsChange('lastName', e.target.value)}
-              className="w-full"
-              required
-            />
-          </div>
-          <div>
-            <Label htmlFor="organization">Organization</Label>
-            <Input
-              id="organization"
-              value={resumeData.personalDetails.organization || ''}
-              onChange={(e) => handlePersonalDetailsChange('organization', e.target.value)}
-              className="w-full"
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          <div>
-            <Label htmlFor="idType">ID Type</Label>
-            <Select
-              value={resumeData.personalDetails.idType || ''}
-              onValueChange={(value) => handlePersonalDetailsChange('idType', value)}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select ID Type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="NMC">NMC</SelectItem>
-                <SelectItem value="GMC">GMC</SelectItem>
-                <SelectItem value="USMLE">USMLE</SelectItem>
-                <SelectItem value="PLAB">PLAB</SelectItem>
-                <SelectItem value="Other">Other</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          
-          {showOtherIdType && (
-            <div>
-              <Label htmlFor="idTypeOther">Specify ID Type</Label>
-              <Input
-                id="idTypeOther"
-                value={resumeData.personalDetails.idTypeOther || ''}
-                onChange={(e) => handlePersonalDetailsChange('idTypeOther', e.target.value)}
-                className="w-full"
-                placeholder="Enter your ID type"
-              />
-            </div>
-          )}
-          
-          <div>
-            <Label htmlFor="idNumber">ID Number</Label>
-            <Input
-              id="idNumber"
-              value={resumeData.personalDetails.idNumber || ''}
-              onChange={(e) => handlePersonalDetailsChange('idNumber', e.target.value)}
-              className="w-full"
-            />
-          </div>
-        </div>
-
-        <div className="mb-4">
-          <div className="flex items-center space-x-2 mb-2">
-            <Checkbox
-              id="hasAccreditedId"
-              checked={resumeData.personalDetails.hasAccreditedId}
-              onCheckedChange={(checked) => 
-                handlePersonalDetailsChange('hasAccreditedId', Boolean(checked))
-              }
-            />
-            <Label htmlFor="hasAccreditedId">I have an accredited ID</Label>
-          </div>
-
-          {resumeData.personalDetails.hasAccreditedId && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
-              <div>
-                <Label htmlFor="accreditedOrg">Accredited Organization</Label>
-                <Input
-                  id="accreditedOrg"
-                  value={resumeData.personalDetails.accreditedOrg || ''}
-                  onChange={(e) => 
-                    handlePersonalDetailsChange('accreditedOrg', e.target.value)
-                  }
-                  className="w-full"
-                />
-              </div>
-              <div>
-                <Label htmlFor="accreditedIdNumber">Accredited ID Number</Label>
-                <Input
-                  id="accreditedIdNumber"
-                  value={resumeData.personalDetails.accreditedIdNumber || ''}
-                  onChange={(e) => 
-                    handlePersonalDetailsChange('accreditedIdNumber', e.target.value)
-                  }
-                  className="w-full"
-                />
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className="mb-4">
-          <Label htmlFor="mailingAddress">Mailing Address</Label>
-          <Textarea
-            id="mailingAddress"
-            value={resumeData.personalDetails.mailingAddress || ''}
-            onChange={(e) => handlePersonalDetailsChange('mailingAddress', e.target.value)}
-            className="w-full"
-          />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          <div>
-            <Label htmlFor="countryCode">Country Code</Label>
-            <Input
-              id="countryCode"
-              value={resumeData.personalDetails.countryCode || ''}
-              onChange={(e) => handlePersonalDetailsChange('countryCode', e.target.value)}
-              className="w-full"
-              placeholder="+1, +44, +91, etc."
-            />
-          </div>
-          <div>
-            <Label htmlFor="phoneNumber">Phone Number</Label>
-            <Input
-              id="phoneNumber"
-              value={resumeData.personalDetails.phoneNumber || ''}
-              onChange={(e) => handlePersonalDetailsChange('phoneNumber', e.target.value)}
-              className="w-full"
-            />
-          </div>
-          <div>
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              value={resumeData.personalDetails.email || ''}
-              onChange={(e) => handlePersonalDetailsChange('email', e.target.value)}
-              className="w-full"
-            />
-          </div>
-          <div>
-            <Label htmlFor="linkedinUrl">LinkedIn URL</Label>
-            <Input
-              id="linkedinUrl"
-              value={resumeData.personalDetails.linkedinUrl || ''}
-              onChange={(e) => handlePersonalDetailsChange('linkedinUrl', e.target.value)}
-              className="w-full"
-              placeholder="https://linkedin.com/in/yourprofile"
-            />
-          </div>
-        </div>
-      </AccordionContent>
-    </AccordionItem>
-  );
-
-  // Medical Education section with "Other" option
-  const renderMedicalEducationSection = () => {
-    const [showOtherDegree, setShowOtherDegree] = useState<{[key: string]: boolean}>({});
-    
-    const handleMedicalEducationChange = (id: string, field: string, value: any) => {
-      if (field === 'degree') {
-        setShowOtherDegree({
-          ...showOtherDegree,
-          [id]: value === 'Other'
-        });
-      }
+  
+  const handleDateChange = (fieldType: string, id: string, field: string, value: string) => {
+    if (fieldType === 'medical-education') {
       updateMedicalEducation(id, { [field]: value });
-    };
-    
-    const handleNewMedicalEducationChange = (field: string, value: any) => {
-      if (field === 'degree') {
-        setShowOtherDegree({
-          ...showOtherDegree,
-          'new': value === 'Other'
-        });
-      }
-      setNewMedicalEducation({ ...newMedicalEducation, [field]: value });
-    };
-
-    return (
-      <AccordionItem value="medical-education" className="border p-4 rounded-md mb-4">
-        <AccordionTrigger className="text-lg font-medium">
-          Medical Education
-        </AccordionTrigger>
-        <AccordionContent>
-          {resumeData.medicalEducation.map((education, index) => {
-            // Initialize showOtherDegree for existing items
-            if (education.degree === 'Other' && !showOtherDegree[education.id]) {
-              setShowOtherDegree({
-                ...showOtherDegree,
-                [education.id]: true
-              });
-            }
-            
-            return (
-              <div key={education.id} className="border p-4 rounded-md mb-4">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-md font-medium">
-                    Medical Education {index + 1}
-                  </h3>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => removeMedicalEducation(education.id)}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <Label htmlFor={`med-institution-${education.id}`}>Institution</Label>
-                    <Input
-                      id={`med-institution-${education.id}`}
-                      value={education.institution}
-                      onChange={(e) => 
-                        handleMedicalEducationChange(education.id, 'institution', e.target.value)
-                      }
-                      className="w-full"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor={`med-location-${education.id}`}>Location</Label>
-                    <Input
-                      id={`med-location-${education.id}`}
-                      value={education.location}
-                      onChange={(e) => 
-                        handleMedicalEducationChange(education.id, 'location', e.target.value)
-                      }
-                      className="w-full"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor={`med-degree-${education.id}`}>Degree</Label>
-                    <Select
-                      value={education.degree}
-                      onValueChange={(value) => 
-                        handleMedicalEducationChange(education.id, 'degree', value)
-                      }
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select Degree" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="MBBS">MBBS</SelectItem>
-                        <SelectItem value="MD">MD</SelectItem>
-                        <SelectItem value="MS">MS</SelectItem>
-                        <SelectItem value="DM">DM</SelectItem>
-                        <SelectItem value="MCh">MCh</SelectItem>
-                        <SelectItem value="DNB">DNB</SelectItem>
-                        <SelectItem value="Other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  {showOtherDegree[education.id] && (
-                    <div>
-                      <Label htmlFor={`med-degree-other-${education.id}`}>Specify Degree</Label>
-                      <Input
-                        id={`med-degree-other-${education.id}`}
-                        value={education.degreeOther || ''}
-                        onChange={(e) => 
-                          handleMedicalEducationChange(education.id, 'degreeOther', e.target.value)
-                        }
-                        className="w-full"
-                        placeholder="Enter your degree"
-                      />
-                    </div>
-                  )}
-                  
-                  <div>
-                    <Label htmlFor={`med-start-date-${education.id}`}>Start Date</Label>
-                    <DateSelector
-                      id={`med-start-date-${education.id}`}
-                      value={education.startDate}
-                      onChange={(value) => 
-                        handleMedicalEducationChange(education.id, 'startDate', value)
-                      }
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor={`med-end-date-${education.id}`}>End Date</Label>
-                    <DateSelector
-                      id={`med-end-date-${education.id}`}
-                      value={education.endDate}
-                      onChange={(value) => 
-                        handleMedicalEducationChange(education.id, 'endDate', value)
-                      }
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor={`med-graduation-year-${education.id}`}>Graduation Year</Label>
-                    <Input
-                      id={`med-graduation-year-${education.id}`}
-                      value={education.graduationYear}
-                      onChange={(e) => 
-                        handleMedicalEducationChange(education.id, 'graduationYear', e.target.value)
-                      }
-                      className="w-full"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor={`med-score-${education.id}`}>Score/Grade</Label>
-                    <Input
-                      id={`med-score-${education.id}`}
-                      value={education.score || ''}
-                      onChange={(e) => 
-                        handleMedicalEducationChange(education.id, 'score', e.target.value)
-                      }
-                      className="w-full"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <Label htmlFor={`med-remarks-${education.id}`}>Remarks</Label>
-                  <Textarea
-                    id={`med-remarks-${education.id}`}
-                    value={education.remarks || ''}
-                    onChange={(e) => 
-                      handleMedicalEducationChange(education.id, 'remarks', e.target.value)
-                    }
-                    className="w-full"
-                  />
-                </div>
-              </div>
-            );
-          })}
-  
-          <div className="border p-4 rounded-md mb-4">
-            <h3 className="text-md font-medium mb-4">Add New Medical Education</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <div>
-                <Label htmlFor="new-med-institution">Institution</Label>
-                <Input
-                  id="new-med-institution"
-                  value={newMedicalEducation.institution}
-                  onChange={(e) => 
-                    handleNewMedicalEducationChange('institution', e.target.value)
-                  }
-                  className="w-full"
-                />
-              </div>
-              <div>
-                <Label htmlFor="new-med-location">Location</Label>
-                <Input
-                  id="new-med-location"
-                  value={newMedicalEducation.location}
-                  onChange={(e) => 
-                    handleNewMedicalEducationChange('location', e.target.value)
-                  }
-                  className="w-full"
-                />
-              </div>
-              <div>
-                <Label htmlFor="new-med-degree">Degree</Label>
-                <Select
-                  value={newMedicalEducation.degree}
-                  onValueChange={(value) => 
-                    handleNewMedicalEducationChange('degree', value)
-                  }
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select Degree" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="MBBS">MBBS</SelectItem>
-                    <SelectItem value="MD">MD</SelectItem>
-                    <SelectItem value="MS">MS</SelectItem>
-                    <SelectItem value="DM">DM</SelectItem>
-                    <SelectItem value="MCh">MCh</SelectItem>
-                    <SelectItem value="DNB">DNB</SelectItem>
-                    <SelectItem value="Other">Other</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              {showOtherDegree['new'] && (
-                <div>
-                  <Label htmlFor="new-med-degree-other">Specify Degree</Label>
-                  <Input
-                    id="new-med-degree-other"
-                    value={newMedicalEducation.degreeOther || ''}
-                    onChange={(e) => 
-                      handleNewMedicalEducationChange('degreeOther', e.target.value)
-                    }
-                    className="w-full"
-                    placeholder="Enter your degree"
-                  />
-                </div>
-              )}
-              
-              <div>
-                <Label htmlFor="new-med-start-date">Start Date</Label>
-                <DateSelector
-                  id="new-med-start-date"
-                  value={newMedicalEducation.startDate}
-                  onChange={(value) => 
-                    handleNewMedicalEducationChange('startDate', value)
-                  }
-                />
-              </div>
-              <div>
-                <Label htmlFor="new-med-end-date">End Date</Label>
-                <DateSelector
-                  id="new-med-end-date"
-                  value={newMedicalEducation.endDate}
-                  onChange={(value) => 
-                    handleNewMedicalEducationChange('endDate', value)
-                  }
-                />
-              </div>
-              <div>
-                <Label htmlFor="new-med-graduation-year">Graduation Year</Label>
-                <Input
-                  id="new-med-graduation-year"
-                  value={newMedicalEducation.graduationYear}
-                  onChange={(e) => 
-                    handleNewMedicalEducationChange('graduationYear', e.target.value)
-                  }
-                  className="w-full"
-                />
-              </div>
-              <div>
-                <Label htmlFor="new-med-score">Score/Grade</Label>
-                <Input
-                  id="new-med-score"
-                  value={newMedicalEducation.score || ''}
-                  onChange={(e) => 
-                    handleNewMedicalEducationChange('score', e.target.value)
-                  }
-                  className="w-full"
-                />
-              </div>
-            </div>
-            <div className="mb-4">
-              <Label htmlFor="new-med-remarks">Remarks</Label>
-              <Textarea
-                id="new-med-remarks"
-                value={newMedicalEducation.remarks || ''}
-                onChange={(e) => 
-                  handleNewMedicalEducationChange('remarks', e.target.value)
-                }
-                className="w-full"
-              />
-            </div>
-            <Button 
-              onClick={() => {
-                addMedicalEducation(newMedicalEducation);
-                setNewMedicalEducation({
-                  id: generateId(),
-                  institution: '',
-                  location: '',
-                  degree: '',
-                  degreeOther: '',
-                  startDate: '',
-                  endDate: '',
-                  graduationYear: '',
-                  score: '',
-                  remarks: '',
-                });
-                setShowOtherDegree({
-                  ...showOtherDegree,
-                  'new': false
-                });
-              }}
-              disabled={!newMedicalEducation.institution || 
-                !newMedicalEducation.degree || 
-                !newMedicalEducation.startDate
-              }
-            >
-              Add Medical Education
-            </Button>
-          </div>
-        </AccordionContent>
-      </AccordionItem>
-    );
-  };
-
-  // Other Education section
-  const renderOtherEducationSection = () => {
-    const [showOtherDegree, setShowOtherDegree] = useState<{[key: string]: boolean}>({});
-    
-    const handleOtherEducationChange = (id: string, field: string, value: any) => {
-      if (field === 'degree') {
-        setShowOtherDegree({
-          ...showOtherDegree,
-          [id]: value === 'Other'
-        });
-      }
+    } else if (fieldType === 'other-education') {
       updateOtherEducation(id, { [field]: value });
-    };
-    
-    const handleNewOtherEducationChange = (field: string, value: any) => {
-      if (field === 'degree') {
-        setShowOtherDegree({
-          ...showOtherDegree,
-          'new': value === 'Other'
-        });
-      }
-      setNewOtherEducation({ ...newOtherEducation, [field]: value });
-    };
-
-    return (
-      <AccordionItem value="other-education" className="border p-4 rounded-md mb-4">
-        <AccordionTrigger className="text-lg font-medium">
-          Other Education
-        </AccordionTrigger>
-        <AccordionContent>
-          {resumeData.otherEducation.map((education, index) => {
-            // Initialize showOtherDegree for existing items
-            if (education.degree === 'Other' && !showOtherDegree[education.id]) {
-              setShowOtherDegree({
-                ...showOtherDegree,
-                [education.id]: true
-              });
-            }
-            
-            return (
-              <div key={education.id} className="border p-4 rounded-md mb-4">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-md font-medium">
-                    Other Education {index + 1}
-                  </h3>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => removeOtherEducation(education.id)}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <Label htmlFor={`other-institution-${education.id}`}>Institution</Label>
-                    <Input
-                      id={`other-institution-${education.id}`}
-                      value={education.institution}
-                      onChange={(e) => 
-                        handleOtherEducationChange(education.id, 'institution', e.target.value)
-                      }
-                      className="w-full"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor={`other-location-${education.id}`}>Location</Label>
-                    <Input
-                      id={`other-location-${education.id}`}
-                      value={education.location}
-                      onChange={(e) => 
-                        handleOtherEducationChange(education.id, 'location', e.target.value)
-                      }
-                      className="w-full"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor={`other-degree-${education.id}`}>Degree</Label>
-                    <Select
-                      value={education.degree}
-                      onValueChange={(value) => 
-                        handleOtherEducationChange(education.id, 'degree', value)
-                      }
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select Degree" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Bachelor's">Bachelor's</SelectItem>
-                        <SelectItem value="Master's">Master's</SelectItem>
-                        <SelectItem value="PhD">PhD</SelectItem>
-                        <SelectItem value="Diploma">Diploma</SelectItem>
-                        <SelectItem value="Certificate">Certificate</SelectItem>
-                        <SelectItem value="Other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  {showOtherDegree[education.id] && (
-                    <div>
-                      <Label htmlFor={`other-degree-other-${education.id}`}>Specify Degree</Label>
-                      <Input
-                        id={`other-degree-other-${education.id}`}
-                        value={education.degreeOther || ''}
-                        onChange={(e) => 
-                          handleOtherEducationChange(education.id, 'degreeOther', e.target.value)
-                        }
-                        className="w-full"
-                        placeholder="Enter your degree"
-                      />
-                    </div>
-                  )}
-                  
-                  <div>
-                    <Label htmlFor={`other-start-date-${education.id}`}>Start Date</Label>
-                    <DateSelector
-                      id={`other-start-date-${education.id}`}
-                      value={education.startDate}
-                      onChange={(value) => 
-                        handleOtherEducationChange(education.id, 'startDate', value)
-                      }
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor={`other-end-date-${education.id}`}>End Date</Label>
-                    <DateSelector
-                      id={`other-end-date-${education.id}`}
-                      value={education.endDate}
-                      onChange={(value) => 
-                        handleOtherEducationChange(education.id, 'endDate', value)
-                      }
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor={`other-graduation-year-${education.id}`}>Graduation Year</Label>
-                    <Input
-                      id={`other-graduation-year-${education.id}`}
-                      value={education.graduationYear}
-                      onChange={(e) => 
-                        handleOtherEducationChange(education.id, 'graduationYear', e.target.value)
-                      }
-                      className="w-full"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor={`other-score-${education.id}`}>Score/Grade</Label>
-                    <Input
-                      id={`other-score-${education.id}`}
-                      value={education.score || ''}
-                      onChange={(e) => 
-                        handleOtherEducationChange(education.id, 'score', e.target.value)
-                      }
-                      className="w-full"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <Label htmlFor={`other-remarks-${education.id}`}>Remarks</Label>
-                  <Textarea
-                    id={`other-remarks-${education.id}`}
-                    value={education.remarks || ''}
-                    onChange={(e) => 
-                      handleOtherEducationChange(education.id, 'remarks', e.target.value)
-                    }
-                    className="w-full"
-                  />
-                </div>
-              </div>
-            );
-          })}
-  
-          <div className="border p-4 rounded-md mb-4">
-            <h3 className="text-md font-medium mb-4">Add New Other Education</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <div>
-                <Label htmlFor="new-other-institution">Institution</Label>
-                <Input
-                  id="new-other-institution"
-                  value={newOtherEducation.institution}
-                  onChange={(e) => 
-                    handleNewOtherEducationChange('institution', e.target.value)
-                  }
-                  className="w-full"
-                />
-              </div>
-              <div>
-                <Label htmlFor="new-other-location">Location</Label>
-                <Input
-                  id="new-other-location"
-                  value={newOtherEducation.location}
-                  onChange={(e) => 
-                    handleNewOtherEducationChange('location', e.target.value)
-                  }
-                  className="w-full"
-                />
-              </div>
-              <div>
-                <Label htmlFor="new-other-degree">Degree</Label>
-                <Select
-                  value={newOtherEducation.degree}
-                  onValueChange={(value) => 
-                    handleNewOtherEducationChange('degree', value)
-                  }
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select Degree" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Bachelor's">Bachelor's</SelectItem>
-                    <SelectItem value="Master's">Master's</SelectItem>
-                    <SelectItem value="PhD">PhD</SelectItem>
-                    <SelectItem value="Diploma">Diploma</SelectItem>
-                    <SelectItem value="Certificate">Certificate</SelectItem>
-                    <SelectItem value="Other">Other</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              {showOtherDegree['new'] && (
-                <div>
-                  <Label htmlFor="new-other-degree-other">Specify Degree</Label>
-                  <Input
-                    id="new-other-degree-other"
-                    value={newOtherEducation.degreeOther || ''}
-                    onChange={(e) => 
-                      handleNewOtherEducationChange('degreeOther', e.target.value)
-                    }
-                    className="w-full"
-                    placeholder="Enter your degree"
-                  />
-                </div>
-              )}
-              
-              <div>
-                <Label htmlFor="new-other-start-date">Start Date</Label>
-                <DateSelector
-                  id="new-other-start-date"
-                  value={newOtherEducation.startDate}
-                  onChange={(value) => 
-                    handleNewOtherEducationChange('startDate', value)
-                  }
-                />
-              </div>
-              <div>
-                <Label htmlFor="new-other-end-date">End Date</Label>
-                <DateSelector
-                  id="new-other-end-date"
-                  value={newOtherEducation.endDate}
-                  onChange={(value) => 
-                    handleNewOtherEducationChange('endDate', value)
-                  }
-                />
-              </div>
-              <div>
-                <Label htmlFor="new-other-graduation-year">Graduation Year</Label>
-                <Input
-                  id="new-other-graduation-year"
-                  value={newOtherEducation.graduationYear}
-                  onChange={(e) => 
-                    handleNewOtherEducationChange('graduationYear', e.target.value)
-                  }
-                  className="w-full"
-                />
-              </div>
-              <div>
-                <Label htmlFor="new-other-score">Score/Grade</Label>
-                <Input
-                  id="new-other-score"
-                  value={newOtherEducation.score || ''}
-                  onChange={(e) => 
-                    handleNewOtherEducationChange('score', e.target.value)
-                  }
-                  className="w-full"
-                />
-              </div>
-            </div>
-            <div className="mb-4">
-              <Label htmlFor="new-other-remarks">Remarks</Label>
-              <Textarea
-                id="new-other-remarks"
-                value={newOtherEducation.remarks || ''}
-                onChange={(e) => 
-                  handleNewOtherEducationChange('remarks', e.target.value)
-                }
-                className="w-full"
-              />
-            </div>
-            <Button 
-              onClick={() => {
-                addOtherEducation(newOtherEducation);
-                setNewOtherEducation({
-                  id: generateId(),
-                  institution: '',
-                  location: '',
-                  degree: '',
-                  degreeOther: '',
-                  startDate: '',
-                  endDate: '',
-                  graduationYear: '',
-                  score: '',
-                  remarks: '',
-                });
-                setShowOtherDegree({
-                  ...showOtherDegree,
-                  'new': false
-                });
-              }}
-              disabled={!newOtherEducation.institution || 
-                !newOtherEducation.degree || 
-                !newOtherEducation.startDate
-              }
-            >
-              Add Other Education
-            </Button>
-          </div>
-        </AccordionContent>
-      </AccordionItem>
-    );
-  };
-
-  // Experience section with "Other" option for type
-  const renderExperienceSection = () => {
-    const [showOtherType, setShowOtherType] = useState<{[key: string]: boolean}>({});
-    
-    const handleExperienceChange = (id: string, field: string, value: any) => {
-      if (field === 'type') {
-        setShowOtherType({
-          ...showOtherType,
-          [id]: value === 'Other'
-        });
-      }
+    } else if (fieldType === 'experience') {
       updateExperience(id, { [field]: value });
+    } else if (fieldType === 'award') {
+      updateAward(id, { [field]: value });
+    } else if (fieldType === 'publication') {
+      updatePublication(id, { [field]: value });
+    } else if (fieldType === 'membership') {
+      updateMembership(id, { [field]: value });
+    }
+  };
+  
+  const addNewEducation = (type: 'medical' | 'other') => {
+    const newEducation = {
+      id: Date.now().toString(),
+      institution: '',
+      location: '',
+      degree: '',
+      startDate: '',
+      endDate: '',
+      graduationYear: '',
+      score: '',
+      remarks: ''
     };
     
-    const handleNewExperienceChange = (field: string, value: any) => {
-      if (field === 'type') {
-        setShowOtherType({
-          ...showOtherType,
-          'new': value === 'Other'
-        });
-      }
-      setNewExperience({ ...newExperience, [field]: value });
-    };
-
-    return (
-      <AccordionItem value="experience" className="border p-4 rounded-md mb-4">
-        <AccordionTrigger className="text-lg font-medium">
-          Experience
-        </AccordionTrigger>
-        <AccordionContent>
-          {resumeData.experiences.map((experience, index) => {
-            // Initialize showOtherType for existing items
-            if (experience.type === 'Other' && !showOtherType[experience.id]) {
-              setShowOtherType({
-                ...showOtherType,
-                [experience.id]: true
-              });
-            }
-            
-            return (
-              <div key={experience.id} className="border p-4 rounded-md mb-4">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-md font-medium">
-                    Experience {index + 1}
-                  </h3>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => removeExperience(experience.id)}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <Label htmlFor={`exp-role-${experience.id}`}>Role/Position</Label>
-                    <Input
-                      id={`exp-role-${experience.id}`}
-                      value={experience.role}
-                      onChange={(e) => 
-                        handleExperienceChange(experience.id, 'role', e.target.value)
-                      }
-                      className="w-full"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor={`exp-department-${experience.id}`}>Department</Label>
-                    <Input
-                      id={`exp-department-${experience.id}`}
-                      value={experience.department}
-                      onChange={(e) => 
-                        handleExperienceChange(experience.id, 'department', e.target.value)
-                      }
-                      className="w-full"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor={`exp-institution-${experience.id}`}>Institution</Label>
-                    <Input
-                      id={`exp-institution-${experience.id}`}
-                      value={experience.institution}
-                      onChange={(e) => 
-                        handleExperienceChange(experience.id, 'institution', e.target.value)
-                      }
-                      className="w-full"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor={`exp-type-${experience.id}`}>Type</Label>
-                    <Select
-                      value={experience.type}
-                      onValueChange={(value) => 
-                        handleExperienceChange(experience.id, 'type', value)
-                      }
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select Type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Full-time">Full-time</SelectItem>
-                        <SelectItem value="Part-time">Part-time</SelectItem>
-                        <SelectItem value="Contract">Contract</SelectItem>
-                        <SelectItem value="Internship">Internship</SelectItem>
-                        <SelectItem value="Residency">Residency</SelectItem>
-                        <SelectItem value="Fellowship">Fellowship</SelectItem>
-                        <SelectItem value="Volunteer">Volunteer</SelectItem>
-                        <SelectItem value="Other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  {showOtherType[experience.id] && (
-                    <div>
-                      <Label htmlFor={`exp-type-other-${experience.id}`}>Specify Type</Label>
-                      <Input
-                        id={`exp-type-other-${experience.id}`}
-                        value={experience.typeOther || ''}
-                        onChange={(e) => 
-                          handleExperienceChange(experience.id, 'typeOther', e.target.value)
-                        }
-                        className="w-full"
-                        placeholder="Enter employment type"
-                      />
-                    </div>
-                  )}
-                  
-                  <div>
-                    <Label htmlFor={`exp-start-date-${experience.id}`}>Start Date</Label>
-                    <DateSelector
-                      id={`exp-start-date-${experience.id}`}
-                      value={experience.startDate}
-                      onChange={(value) => 
-                        handleExperienceChange(experience.id, 'startDate', value)
-                      }
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor={`exp-end-date-${experience.id}`}>End Date</Label>
-                    <DateSelector
-                      id={`exp-end-date-${experience.id}`}
-                      value={experience.endDate}
-                      onChange={(value) => 
-                        handleExperienceChange(experience.id, 'endDate', value)
-                      }
-                    />
-                  </div>
-                </div>
-                <div className="mb-4">
-                  <Label htmlFor={`exp-description-${experience.id}`}>Description</Label>
-                  <Textarea
-                    id={`exp-description-${experience.id}`}
-                    value={experience.description}
-                    onChange={(e) => 
-                      handleExperienceChange(experience.id, 'description', e.target.value)
-                    }
-                    className="w-full"
-                  />
-                </div>
-              </div>
-            );
-          })}
-  
-          <div className="border p-4 rounded-md mb-4">
-            <h3 className="text-md font-medium mb-4">Add New Experience</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <div>
-                <Label htmlFor="new-exp-role">Role/Position</Label>
-                <Input
-                  id="new-exp-role"
-                  value={newExperience.role}
-                  onChange={(e) => 
-                    handleNewExperienceChange('role', e.target.value)
-                  }
-                  className="w-full"
-                />
-              </div>
-              <div>
-                <Label htmlFor="new-exp-department">Department</Label>
-                <Input
-                  id="new-exp-department"
-                  value={newExperience.department}
-                  onChange={(e) => 
-                    handleNewExperienceChange('department', e.target.value)
-                  }
-                  className="w-full"
-                />
-              </div>
-              <div>
-                <Label htmlFor="new-exp-institution">Institution</Label>
-                <Input
-                  id="new-exp-institution"
-                  value={newExperience.institution}
-                  onChange={(e) => 
-                    handleNewExperienceChange('institution', e.target.value)
-                  }
-                  className="w-full"
-                />
-              </div>
-              <div>
-                <Label htmlFor="new-exp-type">Type</Label>
-                <Select
-                  value={newExperience.type}
-                  onValueChange={(value) => 
-                    handleNewExperienceChange('type', value)
-                  }
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select Type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Full-time">Full-time</SelectItem>
-                    <SelectItem value="Part-time">Part-time</SelectItem>
-                    <SelectItem value="Contract">Contract</SelectItem>
-                    <SelectItem value="Internship">Internship</SelectItem>
-                    <SelectItem value="Residency">Residency</SelectItem>
-                    <SelectItem value="Fellowship">Fellowship</SelectItem>
-                    <SelectItem value="Volunteer">Volunteer</SelectItem>
-                    <SelectItem value="Other">Other</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              {showOtherType['new'] && (
-                <div>
-                  <Label htmlFor="new-exp-type-other">Specify Type</Label>
-                  <Input
-                    id="new-exp-type-other"
-                    value={newExperience.typeOther || ''}
-                    onChange={(e) => 
-                      handleNewExperienceChange('typeOther', e.target.value)
-                    }
-                    className="w-full"
-                    placeholder="Enter employment type"
-                  />
-                </div>
-              )}
-              
-              <div>
-                <Label htmlFor="new-exp-start-date">Start Date</Label>
-                <DateSelector
-                  id="new-exp-start-date"
-                  value={newExperience.startDate}
-                  onChange={(value) => 
-                    handleNewExperienceChange('startDate', value)
-                  }
-                />
-              </div>
-              <div>
-                <Label htmlFor="new-exp-end-date">End Date</Label>
-                <DateSelector
-                  id="new-exp-end-date"
-                  value={newExperience.endDate}
-                  onChange={(value) => 
-                    handleNewExperienceChange('endDate', value)
-                  }
-                />
-              </div>
-            </div>
-            <div className="mb-4">
-              <Label htmlFor="new-exp-description">Description</Label>
-              <Textarea
-                id="new-exp-description"
-                value={newExperience.description}
-                onChange={(e) => 
-                  handleNewExperienceChange('description', e.target.value)
-                }
-                className="w-full"
-              />
-            </div>
-            <Button 
-              onClick={() => {
-                addExperience(newExperience);
-                setNewExperience({
-                  id: generateId(),
-                  role: '',
-                  department: '',
-                  institution: '',
-                  startDate: '',
-                  endDate: '',
-                  type: '',
-                  typeOther: '',
-                  description: '',
-                });
-                setShowOtherType({
-                  ...showOtherType,
-                  'new': false
-                });
-              }}
-              disabled={!newExperience.role || 
-                !newExperience.institution || 
-                !newExperience.startDate
-              }
-            >
-              Add Experience
-            </Button>
-          </div>
-        </AccordionContent>
-      </AccordionItem>
-    );
+    if (type === 'medical') {
+      addMedicalEducation(newEducation);
+      toast.success("Added new medical education");
+    } else {
+      addOtherEducation(newEducation);
+      toast.success("Added other education");
+    }
   };
-
-  // Awards section
-  const renderAwardsSection = () => {
-    const [newAward, setNewAward] = useState({
-      id: generateId(),
+  
+  const addNewExperience = () => {
+    const newExperience = {
+      id: Date.now().toString(),
+      role: '',
+      department: '',
+      institution: '',
+      startDate: '',
+      endDate: '',
+      type: 'Full-Time',
+      description: ''
+    };
+    
+    addExperience(newExperience);
+    toast.success("Added new experience");
+  };
+  
+  const addNewAward = () => {
+    const newAward = {
+      id: Date.now().toString(),
       title: '',
       organization: '',
       date: '',
-      description: '',
-    });
-
-    const handleAwardChange = (id: string, field: string, value: any) => {
-      updateAward(id, { [field]: value });
+      description: ''
     };
-
-    const handleNewAwardChange = (field: string, value: any) => {
-      setNewAward({ ...newAward, [field]: value });
-    };
-
-    return (
-      <AccordionItem value="awards" className="border p-4 rounded-md mb-4">
-        <AccordionTrigger className="text-lg font-medium">
-          Awards & Honors
-        </AccordionTrigger>
-        <AccordionContent>
-          {resumeData.awards.map((award, index) => (
-            <div key={award.id} className="border p-4 rounded-md mb-4">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-md font-medium">
-                  Award {index + 1}
-                </h3>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => removeAward(award.id)}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div>
-                  <Label htmlFor={`award-title-${award.id}`}>Title</Label>
-                  <Input
-                    id={`award-title-${award.id}`}
-                    value={award.title}
-                    onChange={(e) => 
-                      handleAwardChange(award.id, 'title', e.target.value)
-                    }
-                    className="w-full"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor={`award-organization-${award.id}`}>Organization</Label>
-                  <Input
-                    id={`award-organization-${award.id}`}
-                    value={award.organization}
-                    onChange={(e) => 
-                      handleAwardChange(award.id, 'organization', e.target.value)
-                    }
-                    className="w-full"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor={`award-date-${award.id}`}>Date</Label>
-                  <DateSelector
-                    id={`award-date-${award.id}`}
-                    value={award.date}
-                    onChange={(value) => 
-                      handleAwardChange(award.id, 'date', value)
-                    }
-                  />
-                </div>
-              </div>
-              <div className="mb-4">
-                <Label htmlFor={`award-description-${award.id}`}>Description</Label>
-                <Textarea
-                  id={`award-description-${award.id}`}
-                  value={award.description}
-                  onChange={(e) => 
-                    handleAwardChange(award.id, 'description', e.target.value)
-                  }
-                  className="w-full"
-                />
-              </div>
-            </div>
-          ))}
-
-          <div className="border p-4 rounded-md mb-4">
-            <h3 className="text-md font-medium mb-4">Add New Award</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <div>
-                <Label htmlFor="new-award-title">Title</Label>
-                <Input
-                  id="new-award-title"
-                  value={newAward.title}
-                  onChange={(e) => 
-                    handleNewAwardChange('title', e.target.value)
-                  }
-                  className="w-full"
-                />
-              </div>
-              <div>
-                <Label htmlFor="new-award-organization">Organization</Label>
-                <Input
-                  id="new-award-organization"
-                  value={newAward.organization}
-                  onChange={(e) => 
-                    handleNewAwardChange('organization', e.target.value)
-                  }
-                  className="w-full"
-                />
-              </div>
-              <div>
-                <Label htmlFor="new-award-date">Date</Label>
-                <DateSelector
-                  id="new-award-date"
-                  value={newAward.date}
-                  onChange={(value) => 
-                    handleNewAwardChange('date', value)
-                  }
-                />
-              </div>
-            </div>
-            <div className="mb-4">
-              <Label htmlFor="new-award-description">Description</Label>
-              <Textarea
-                id="new-award-description"
-                value={newAward.description}
-                onChange={(e) => 
-                  handleNewAwardChange('description', e.target.value)
-                }
-                className="w-full"
-              />
-            </div>
-            <Button 
-              onClick={() => {
-                addAward(newAward);
-                setNewAward({
-                  id: generateId(),
-                  title: '',
-                  organization: '',
-                  date: '',
-                  description: '',
-                });
-              }}
-              disabled={!newAward.title}
-            >
-              Add Award
-            </Button>
-          </div>
-        </AccordionContent>
-      </AccordionItem>
-    );
+    
+    addAward(newAward);
+    toast.success("Added new award");
   };
-
-  // Publications section with improved text input format
-  const renderPublicationsSection = () => {
-    const [newPublication, setNewPublication] = useState({
-      id: generateId(),
+  
+  const addNewPublication = () => {
+    const newPublication = {
+      id: Date.now().toString(),
       authors: '',
       title: '',
       journal: '',
       date: '',
-      doi: '',
-    });
-
-    const handlePublicationChange = (id: string, field: string, value: any) => {
-      updatePublication(id, { [field]: value });
+      doi: ''
     };
-
-    const handleNewPublicationChange = (field: string, value: any) => {
-      setNewPublication({ ...newPublication, [field]: value });
+    
+    addPublication(newPublication);
+    toast.success("Added new publication");
+  };
+  
+  const addNewMembership = () => {
+    const newMembership = {
+      id: Date.now().toString(),
+      name: '',
+      issueDate: '',
+      expiryDate: '',
+      remarks: ''
     };
-
+    
+    addMembership(newMembership);
+    toast.success("Added new membership");
+  };
+  
+  const addNewLanguage = () => {
+    const newLanguage = {
+      id: Date.now().toString(),
+      name: '',
+      proficiency: 'Intermediate' as const
+    };
+    
+    addLanguage(newLanguage);
+    toast.success("Added new language");
+  };
+  
+  const handleHobbyToggle = (hobby: string) => {
+    let newHobbies;
+    if (selectedHobbies.includes(hobby)) {
+      newHobbies = selectedHobbies.filter(h => h !== hobby);
+    } else {
+      newHobbies = [...selectedHobbies, hobby];
+    }
+    setSelectedHobbies(newHobbies);
+    updateHobbies(newHobbies);
+  };
+  
+  const handleAddCustomHobby = () => {
+    if (customHobby && !selectedHobbies.includes(customHobby)) {
+      const newHobbies = [...selectedHobbies, customHobby];
+      setSelectedHobbies(newHobbies);
+      updateHobbies(newHobbies);
+      setCustomHobby('');
+      toast.success(`Added "${customHobby}" to your hobbies`);
+    }
+  };
+  
+  const handleAddCustomLanguage = () => {
+    if (customLanguage) {
+      addLanguage({
+        id: Date.now().toString(),
+        name: customLanguage,
+        proficiency: 'Intermediate'
+      });
+      setCustomLanguage('');
+      toast.success(`Added ${customLanguage} to your languages`);
+    }
+  };
+  
+  const renderEducationSection = () => {
     return (
-      <AccordionItem value="publications" className="border p-4 rounded-md mb-4">
-        <AccordionTrigger className="text-lg font-medium">
-          Publications
-        </AccordionTrigger>
-        <AccordionContent>
-          <div className="mb-4">
-            <div className="flex items-center space-x-2 mb-2">
-              <Label className="text-md font-medium">Manual Entry Format</Label>
+      <AccordionItem value="education" className="border border-white/10 rounded-xl overflow-hidden bg-white/5 backdrop-blur-sm">
+        <AccordionTrigger className="hover:bg-white/5 px-4 py-3 rounded-t-xl">
+          <div className="flex items-center">
+            <div className="p-2 rounded-full bg-gradient-to-r from-medsume-appleBlue to-medsume-teal mr-3">
+              <GraduationCap size={18} className="text-white" />
             </div>
-            <p className="text-sm text-gray-600 mb-4">
-              Enter your publications in the text area below. Please enter one publication per line for better formatting.
-            </p>
-            <Textarea
-              value={resumeData.publicationsText || ''}
-              onChange={(e) => updatePublicationsText(e.target.value)}
-              className="w-full min-h-[200px]"
-              placeholder="Enter each publication on a new line. For example:&#10;Smith J, Jones A, et al. Title of Paper 1. Journal of Medicine. 2020;10(2):123-135.&#10;Jones A, Smith J, et al. Title of Paper 2. Journal of Surgery. 2021;15(4):243-250."
-            />
+            <span className="text-white font-medium">Education</span>
           </div>
-
-          <Separator className="my-6" />
-
-          <div className="mb-4">
-            <div className="flex items-center space-x-2 mb-2">
-              <Label className="text-md font-medium">Structured Entry Format</Label>
+        </AccordionTrigger>
+        <AccordionContent className="px-4 pb-6">
+          <div className="mb-8">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-medsume-appleBlue font-medium">Medical Education</h3>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => addNewEducation('medical')}
+                className="border-medsume-teal text-medsume-teal hover:bg-medsume-teal/10"
+              >
+                <Plus size={16} className="mr-1" /> Add
+              </Button>
             </div>
             
-            {resumeData.publications.map((publication, index) => (
-              <div key={publication.id} className="border p-4 rounded-md mb-4">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-md font-medium">
-                    Publication {index + 1}
-                  </h3>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => removePublication(publication.id)}
+            <div className="space-y-8">
+              {resumeData.medicalEducation.map((edu, index) => (
+                <div 
+                  key={edu.id} 
+                  className="p-4 border border-white/10 rounded-lg bg-white/5 hover:bg-white/10 transition-all duration-300"
+                >
+                  <div className="flex justify-between mb-4">
+                    <h4 className="text-white font-medium">Degree {index + 1}</h4>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => removeMedicalEducation(edu.id)}
+                      className="text-red-400 hover:text-red-300 hover:bg-red-500/10 h-8 w-8 p-0"
+                    >
+                      <X size={16} />
+                    </Button>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-white/80">Institution</label>
+                      <Input 
+                        value={edu.institution}
+                        onChange={(e) => updateMedicalEducation(edu.id, { institution: e.target.value })}
+                        className="bg-white/10 border-white/20 text-white focus:border-medsume-teal"
+                        placeholder="Institution name"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-white/80">Degree</label>
+                      <Select 
+                        value={edu.degree} 
+                        onValueChange={(value) => updateMedicalEducation(edu.id, { degree: value })}
+                      >
+                        <SelectTrigger className="bg-white/10 border-white/20 text-white focus:border-medsume-teal">
+                          <SelectValue placeholder="Select degree" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-slate-800 border-white/10 text-white">
+                          {degreeOptions.map(degree => (
+                            <SelectItem key={degree} value={degree} className="focus:bg-medsume-teal/20 focus:text-white">
+                              {degree}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-white/80">Location</label>
+                      <Input 
+                        value={edu.location}
+                        onChange={(e) => updateMedicalEducation(edu.id, { location: e.target.value })}
+                        className="bg-white/10 border-white/20 text-white focus:border-medsume-teal"
+                        placeholder="City, Country"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-white/80">Remarks</label>
+                      <Input 
+                        value={edu.remarks}
+                        onChange={(e) => updateMedicalEducation(edu.id, { remarks: e.target.value })}
+                        className="bg-white/10 border-white/20 text-white focus:border-medsume-teal"
+                        placeholder="Additional information"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-white/80">Start Date</label>
+                      <div className="relative">
+                        <Input 
+                          type="date"
+                          value={edu.startDate}
+                          onChange={(e) => handleDateChange('medical-education', edu.id, 'startDate', e.target.value)}
+                          className="bg-white/10 border-white/20 text-white focus:border-medsume-teal pl-10"
+                        />
+                        <Calendar size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60" />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-white/80">End Date</label>
+                      <div className="relative">
+                        <Input 
+                          type="date"
+                          value={edu.endDate}
+                          onChange={(e) => handleDateChange('medical-education', edu.id, 'endDate', e.target.value)}
+                          className="bg-white/10 border-white/20 text-white focus:border-medsume-teal pl-10"
+                        />
+                        <Calendar size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60" />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-white/80">Graduation Year</label>
+                      <Input 
+                        value={edu.graduationYear}
+                        onChange={(e) => updateMedicalEducation(edu.id, { graduationYear: e.target.value })}
+                        className="bg-white/10 border-white/20 text-white focus:border-medsume-teal"
+                        placeholder="Year of graduation"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-white/80">Score</label>
+                      <Input 
+                        value={edu.score}
+                        onChange={(e) => updateMedicalEducation(edu.id, { score: e.target.value })}
+                        className="bg-white/10 border-white/20 text-white focus:border-medsume-teal"
+                        placeholder="Score"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+              
+              {resumeData.medicalEducation.length === 0 && (
+                <div className="text-center p-6 border border-dashed border-white/20 rounded-lg bg-white/5">
+                  <GraduationCap size={32} className="mx-auto text-white/40 mb-2" />
+                  <p className="text-white/60">No medical education added yet</p>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => addNewEducation('medical')}
+                    className="mt-2 border-medsume-teal text-medsume-teal hover:bg-medsume-teal/10"
                   >
-                    <X className="h-4 w-4" />
+                    <Plus size={16} className="mr-1" /> Add Medical Education
                   </Button>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <Label htmlFor={`pub-authors-${publication.id}`}>Authors</Label>
-                    <Input
-                      id={`pub-authors-${publication.id}`}
-                      value={publication.authors}
-                      onChange={(e) => 
-                        handlePublicationChange(publication.id, 'authors', e.target.value)
-                      }
-                      className="w-full"
-                      placeholder="e.g., Smith J, Jones A, et al."
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor={`pub-title-${publication.id}`}>Title</Label>
-                    <Input
-                      id={`pub-title-${publication.id}`}
-                      value={publication.title}
-                      onChange={(e) => 
-                        handlePublicationChange(publication.id, 'title', e.target.value)
-                      }
-                      className="w-full"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor={`pub-journal-${publication.id}`}>Journal</Label>
-                    <Input
-                      id={`pub-journal-${publication.id}`}
-                      value={publication.journal}
-                      onChange={(e) => 
-                        handlePublicationChange(publication.id, 'journal', e.target.value)
-                      }
-                      className="w-full"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor={`pub-date-${publication.id}`}>Date</Label>
-                    <DateSelector
-                      id={`pub-date-${publication.id}`}
-                      value={publication.date}
-                      onChange={(value) => 
-                        handlePublicationChange(publication.id, 'date', value)
-                      }
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor={`pub-doi-${publication.id}`}>DOI</Label>
-                    <Input
-                      id={`pub-doi-${publication.id}`}
-                      value={publication.doi}
-                      onChange={(e) => 
-                        handlePublicationChange(publication.id, 'doi', e.target.value)
-                      }
-                      className="w-full"
-                      placeholder="e.g., 10.1000/xyz123"
-                    />
-                  </div>
-                </div>
-              </div>
-            ))}
-            
-            <div className="border p-4 rounded-md mb-4">
-              <h3 className="text-md font-medium mb-4">Add New Publication</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div>
-                  <Label htmlFor="new-pub-authors">Authors</Label>
-                  <Input
-                    id="new-pub-authors"
-                    value={newPublication.authors}
-                    onChange={(e) => 
-                      handleNewPublicationChange('authors', e.target.value)
-                    }
-                    className="w-full"
-                    placeholder="e.g., Smith J, Jones A, et al."
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="new-pub-title">Title</Label>
-                  <Input
-                    id="new-pub-title"
-                    value={newPublication.title}
-                    onChange={(e) => 
-                      handleNewPublicationChange('title', e.target.value)
-                    }
-                    className="w-full"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="new-pub-journal">Journal</Label>
-                  <Input
-                    id="new-pub-journal"
-                    value={newPublication.journal}
-                    onChange={(e) => 
-                      handleNewPublicationChange('journal', e.target.value)
-                    }
-                    className="w-full"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="new-pub-date">Date</Label>
-                  <DateSelector
-                    id="new-pub-date"
-                    value={newPublication.date}
-                    onChange={(value) => 
-                      handleNewPublicationChange('date', value)
-                    }
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="new-pub-doi">DOI</Label>
-                  <Input
-                    id="new-pub-doi"
-                    value={newPublication.doi}
-                    onChange={(e) => 
-                      handleNewPublicationChange('doi', e.target.value)
-                    }
-                    className="w-full"
-                    placeholder="e.g., 10.1000/xyz123"
-                  />
-                </div>
-              </div>
+              )}
+            </div>
+          </div>
+          
+          <div>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-medsume-appleBlue font-medium">Additional Education</h3>
               <Button 
-                onClick={() => {
-                  addPublication(newPublication);
-                  setNewPublication({
-                    id: generateId(),
-                    authors: '',
-                    title: '',
-                    journal: '',
-                    date: '',
-                    doi: '',
-                  });
-                }}
-                disabled={!newPublication.title || !newPublication.authors}
+                variant="outline" 
+                size="sm" 
+                onClick={() => addNewEducation('other')}
+                className="border-medsume-teal text-medsume-teal hover:bg-medsume-teal/10"
               >
-                Add Publication
+                <Plus size={16} className="mr-1" /> Add
+              </Button>
+            </div>
+            
+            <div className="space-y-8">
+              {resumeData.otherEducation.map((edu, index) => (
+                <div 
+                  key={edu.id} 
+                  className="p-4 border border-white/10 rounded-lg bg-white/5 hover:bg-white/10 transition-all duration-300"
+                >
+                  <div className="flex justify-between mb-4">
+                    <h4 className="text-white font-medium">Degree {index + 1}</h4>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => removeOtherEducation(edu.id)}
+                      className="text-red-400 hover:text-red-300 hover:bg-red-500/10 h-8 w-8 p-0"
+                    >
+                      <X size={16} />
+                    </Button>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-white/80">Institution</label>
+                      <Input 
+                        value={edu.institution}
+                        onChange={(e) => updateOtherEducation(edu.id, { institution: e.target.value })}
+                        className="bg-white/10 border-white/20 text-white focus:border-medsume-teal"
+                        placeholder="Institution name"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-white/80">Degree</label>
+                      <Input 
+                        value={edu.degree}
+                        onChange={(e) => updateOtherEducation(edu.id, { degree: e.target.value })}
+                        className="bg-white/10 border-white/20 text-white focus:border-medsume-teal"
+                        placeholder="Degree name"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-white/80">Location</label>
+                      <Input 
+                        value={edu.location}
+                        onChange={(e) => updateOtherEducation(edu.id, { location: e.target.value })}
+                        className="bg-white/10 border-white/20 text-white focus:border-medsume-teal"
+                        placeholder="City, Country"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-white/80">Remarks</label>
+                      <Input 
+                        value={edu.remarks}
+                        onChange={(e) => updateOtherEducation(edu.id, { remarks: e.target.value })}
+                        className="bg-white/10 border-white/20 text-white focus:border-medsume-teal"
+                        placeholder="Additional information"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-white/80">Start Date</label>
+                      <div className="relative">
+                        <Input 
+                          type="date"
+                          value={edu.startDate}
+                          onChange={(e) => handleDateChange('other-education', edu.id, 'startDate', e.target.value)}
+                          className="bg-white/10 border-white/20 text-white focus:border-medsume-teal pl-10"
+                        />
+                        <Calendar size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60" />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-white/80">End Date</label>
+                      <div className="relative">
+                        <Input 
+                          type="date"
+                          value={edu.endDate}
+                          onChange={(e) => handleDateChange('other-education', edu.id, 'endDate', e.target.value)}
+                          className="bg-white/10 border-white/20 text-white focus:border-medsume-teal pl-10"
+                        />
+                        <Calendar size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              
+              {resumeData.otherEducation.length === 0 && (
+                <div className="text-center p-6 border border-dashed border-white/20 rounded-lg bg-white/5">
+                  <BookOpen size={32} className="mx-auto text-white/40 mb-2" />
+                  <p className="text-white/60">No additional education added yet</p>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => addNewEducation('other')}
+                    className="mt-2 border-medsume-teal text-medsume-teal hover:bg-medsume-teal/10"
+                  >
+                    <Plus size={16} className="mr-1" /> Add Additional Education
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
+        </AccordionContent>
+      </AccordionItem>
+    );
+  };
+  
+  const renderHobbiesSection = () => {
+    return (
+      <AccordionItem value="hobbies" className="border border-white/10 rounded-xl overflow-hidden bg-white/5 backdrop-blur-sm">
+        <AccordionTrigger className="hover:bg-white/5 px-4 py-3 rounded-t-xl">
+          <div className="flex items-center">
+            <div className="p-2 rounded-full bg-gradient-to-r from-medsume-appleBlue to-medsume-teal mr-3">
+              <Heart size={18} className="text-white" />
+            </div>
+            <span className="text-white font-medium">Hobbies & Interests</span>
+          </div>
+        </AccordionTrigger>
+        <AccordionContent className="px-4 pb-6">
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-3 text-white/80">Select your hobbies and interests</label>
+            <div className="flex flex-wrap gap-2 mb-4">
+              {selectedHobbies.map(hobby => (
+                <div 
+                  key={hobby}
+                  className="px-3 py-1 rounded-full bg-gradient-to-r from-medsume-appleBlue to-medsume-teal text-white text-sm flex items-center gap-1"
+                >
+                  {hobby}
+                  <button
+                    type="button"
+                    onClick={() => handleHobbyToggle(hobby)}
+                    className="ml-1 hover:text-white/80"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              ))}
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 max-h-60 overflow-y-auto pr-2">
+              {hobbiesOptions.filter(h => !selectedHobbies.includes(h)).map(hobby => (
+                <div 
+                  key={hobby} 
+                  className="flex items-center space-x-2 p-2 border border-white/10 rounded-lg hover:bg-white/10 cursor-pointer transition-all duration-200"
+                  onClick={() => handleHobbyToggle(hobby)}
+                >
+                  <Checkbox 
+                    id={`hobby-${hobby}`}
+                    checked={selectedHobbies.includes(hobby)}
+                    onCheckedChange={() => handleHobbyToggle(hobby)}
+                    className="border-white/20 data-[state=checked]:bg-medsume-teal data-[state=checked]:border-medsume-teal"
+                  />
+                  <label 
+                    htmlFor={`hobby-${hobby}`}
+                    className="text-sm text-white leading-none cursor-pointer"
+                  >
+                    {hobby}
+                  </label>
+                </div>
+              ))}
+            </div>
+            
+            <div className="mt-4 flex items-center gap-2">
+              <Input 
+                value={customHobby}
+                onChange={(e) => setCustomHobby(e.target.value)}
+                className="bg-white/10 border-white/20 text-white focus:border-medsume-teal"
+                placeholder="Add a custom hobby"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && customHobby) {
+                    e.preventDefault();
+                    handleAddCustomHobby();
+                  }
+                }}
+              />
+              <Button 
+                type="button" 
+                onClick={handleAddCustomHobby}
+                className="bg-gradient-to-r from-medsume-appleBlue to-medsume-teal text-white hover:opacity-90"
+                disabled={!customHobby}
+              >
+                Add
               </Button>
             </div>
           </div>
@@ -1633,312 +608,119 @@ export const ResumeForm: React.FC = () => {
       </AccordionItem>
     );
   };
-
-  // Memberships section
-  const renderMembershipsSection = () => {
-    const [newMembership, setNewMembership] = useState({
-      id: generateId(),
-      name: '',
-      issueDate: '',
-      expiryDate: '',
-      issuedBy: '',
-      remarks: '',
-    });
-
-    const handleMembershipChange = (id: string, field: string, value: any) => {
-      updateMembership(id, { [field]: value });
-    };
-
-    const handleNewMembershipChange = (field: string, value: any) => {
-      setNewMembership({ ...newMembership, [field]: value });
-    };
-
-    return (
-      <AccordionItem value="memberships" className="border p-4 rounded-md mb-4">
-        <AccordionTrigger className="text-lg font-medium">
-          Memberships
-        </AccordionTrigger>
-        <AccordionContent>
-          {resumeData.memberships.map((membership, index) => (
-            <div key={membership.id} className="border p-4 rounded-md mb-4">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-md font-medium">
-                  Membership {index + 1}
-                </h3>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => removeMembership(membership.id)}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div>
-                  <Label htmlFor={`mem-name-${membership.id}`}>Name</Label>
-                  <Input
-                    id={`mem-name-${membership.id}`}
-                    value={membership.name}
-                    onChange={(e) => 
-                      handleMembershipChange(membership.id, 'name', e.target.value)
-                    }
-                    className="w-full"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor={`mem-issued-by-${membership.id}`}>Issued By</Label>
-                  <Input
-                    id={`mem-issued-by-${membership.id}`}
-                    value={membership.issuedBy || ''}
-                    onChange={(e) => 
-                      handleMembershipChange(membership.id, 'issuedBy', e.target.value)
-                    }
-                    className="w-full"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor={`mem-issue-date-${membership.id}`}>Issue Date</Label>
-                  <DateSelector
-                    id={`mem-issue-date-${membership.id}`}
-                    value={membership.issueDate}
-                    onChange={(value) => 
-                      handleMembershipChange(membership.id, 'issueDate', value)
-                    }
-                  />
-                </div>
-                <div>
-                  <Label htmlFor={`mem-expiry-date-${membership.id}`}>Expiry Date (if applicable)</Label>
-                  <DateSelector
-                    id={`mem-expiry-date-${membership.id}`}
-                    value={membership.expiryDate || ''}
-                    onChange={(value) => 
-                      handleMembershipChange(membership.id, 'expiryDate', value)
-                    }
-                  />
-                </div>
-              </div>
-              <div className="mb-4">
-                <Label htmlFor={`mem-remarks-${membership.id}`}>Remarks</Label>
-                <Textarea
-                  id={`mem-remarks-${membership.id}`}
-                  value={membership.remarks}
-                  onChange={(e) => 
-                    handleMembershipChange(membership.id, 'remarks', e.target.value)
-                  }
-                  className="w-full"
-                />
-              </div>
-            </div>
-          ))}
-
-          <div className="border p-4 rounded-md mb-4">
-            <h3 className="text-md font-medium mb-4">Add New Membership</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <div>
-                <Label htmlFor="new-mem-name">Name</Label>
-                <Input
-                  id="new-mem-name"
-                  value={newMembership.name}
-                  onChange={(e) => 
-                    handleNewMembershipChange('name', e.target.value)
-                  }
-                  className="w-full"
-                />
-              </div>
-              <div>
-                <Label htmlFor="new-mem-issued-by">Issued By</Label>
-                <Input
-                  id="new-mem-issued-by"
-                  value={newMembership.issuedBy || ''}
-                  onChange={(e) => 
-                    handleNewMembershipChange('issuedBy', e.target.value)
-                  }
-                  className="w-full"
-                />
-              </div>
-              <div>
-                <Label htmlFor="new-mem-issue-date">Issue Date</Label>
-                <DateSelector
-                  id="new-mem-issue-date"
-                  value={newMembership.issueDate}
-                  onChange={(value) => 
-                    handleNewMembershipChange('issueDate', value)
-                  }
-                />
-              </div>
-              <div>
-                <Label htmlFor="new-mem-expiry-date">Expiry Date (if applicable)</Label>
-                <DateSelector
-                  id="new-mem-expiry-date"
-                  value={newMembership.expiryDate || ''}
-                  onChange={(value) => 
-                    handleNewMembershipChange('expiryDate', value)
-                  }
-                />
-              </div>
-            </div>
-            <div className="mb-4">
-              <Label htmlFor="new-mem-remarks">Remarks</Label>
-              <Textarea
-                id="new-mem-remarks"
-                value={newMembership.remarks}
-                onChange={(e) => 
-                  handleNewMembershipChange('remarks', e.target.value)
-                }
-                className="w-full"
-              />
-            </div>
-            <Button 
-              onClick={() => {
-                addMembership(newMembership);
-                setNewMembership({
-                  id: generateId(),
-                  name: '',
-                  issueDate: '',
-                  expiryDate: '',
-                  issuedBy: '',
-                  remarks: '',
-                });
-              }}
-              disabled={!newMembership.name || !newMembership.issueDate}
-            >
-              Add Membership
-            </Button>
-          </div>
-        </AccordionContent>
-      </AccordionItem>
-    );
-  };
-
-  // Languages section
+  
   const renderLanguagesSection = () => {
-    const [newLanguage, setNewLanguage] = useState({
-      id: generateId(),
-      name: '',
-      proficiency: 'Intermediate' as 'Native' | 'Fluent' | 'Intermediate' | 'Basic',
-    });
-
-    const handleLanguageChange = (id: string, field: string, value: any) => {
-      updateLanguage(id, { [field]: value });
-    };
-
-    const handleNewLanguageChange = (field: string, value: any) => {
-      setNewLanguage({ ...newLanguage, [field]: value });
-    };
-
     return (
-      <AccordionItem value="languages" className="border p-4 rounded-md mb-4">
-        <AccordionTrigger className="text-lg font-medium">
-          Languages
-        </AccordionTrigger>
-        <AccordionContent>
-          <div className="flex flex-wrap gap-2 mb-4">
-            {resumeData.languages.map((language) => (
-              <div key={language.id} className="flex items-center bg-gray-100 rounded-full px-3 py-1">
-                <span>{language.name} - {language.proficiency}</span>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-6 w-6 p-0 ml-1"
-                  onClick={() => removeLanguage(language.id)}
-                >
-                  <X className="h-3 w-3" />
-                </Button>
-              </div>
-            ))}
-          </div>
-
-          <div className="border p-4 rounded-md mb-4">
-            <h3 className="text-md font-medium mb-4">Add New Language</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <div>
-                <Label htmlFor="new-lang-name">Language</Label>
-                <Input
-                  id="new-lang-name"
-                  value={newLanguage.name}
-                  onChange={(e) => 
-                    handleNewLanguageChange('name', e.target.value)
-                  }
-                  className="w-full"
-                />
-              </div>
-              <div>
-                <Label htmlFor="new-lang-proficiency">Proficiency</Label>
-                <Select
-                  value={newLanguage.proficiency}
-                  onValueChange={(value: 'Native' | 'Fluent' | 'Intermediate' | 'Basic') => 
-                    handleNewLanguageChange('proficiency', value)
-                  }
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select Proficiency" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Native">Native</SelectItem>
-                    <SelectItem value="Fluent">Fluent</SelectItem>
-                    <SelectItem value="Intermediate">Intermediate</SelectItem>
-                    <SelectItem value="Basic">Basic</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+      <AccordionItem value="languages" className="border border-white/10 rounded-xl overflow-hidden bg-white/5 backdrop-blur-sm">
+        <AccordionTrigger className="hover:bg-white/5 px-4 py-3 rounded-t-xl">
+          <div className="flex items-center">
+            <div className="p-2 rounded-full bg-gradient-to-r from-medsume-appleBlue to-medsume-teal mr-3">
+              <Languages size={18} className="text-white" />
             </div>
+            <span className="text-white font-medium">Languages</span>
+          </div>
+        </AccordionTrigger>
+        <AccordionContent className="px-4 pb-6">
+          <div className="flex justify-between items-center mb-4">
+            <label className="block text-sm font-medium text-white/80">Add languages you speak</label>
             <Button 
-              onClick={() => {
-                addLanguage(newLanguage);
-                setNewLanguage({
-                  id: generateId(),
-                  name: '',
-                  proficiency: 'Intermediate',
-                });
-              }}
-              disabled={!newLanguage.name}
+              variant="outline" 
+              size="sm" 
+              onClick={addNewLanguage}
+              className="border-medsume-teal text-medsume-teal hover:bg-medsume-teal/10"
             >
-              Add Language
+              <Plus size={16} className="mr-1" /> Add
             </Button>
           </div>
-        </AccordionContent>
-      </AccordionItem>
-    );
-  };
-
-  // Hobbies section
-  const renderHobbiesSection = () => {
-    return (
-      <AccordionItem value="hobbies" className="border p-4 rounded-md mb-4">
-        <AccordionTrigger className="text-lg font-medium">
-          Hobbies & Interests
-        </AccordionTrigger>
-        <AccordionContent>
-          <div className="flex flex-wrap gap-2 mb-4">
-            {hobbies.map((hobby, index) => (
-              <div key={index} className="flex items-center bg-gray-100 rounded-full px-3 py-1">
-                <span>{hobby}</span>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-6 w-6 p-0 ml-1"
-                  onClick={() => handleRemoveHobby(hobby)}
+          
+          <div className="space-y-4">
+            {resumeData.languages.map((language) => (
+              <div 
+                key={language.id} 
+                className="p-4 border border-white/10 rounded-lg bg-white/5 hover:bg-white/10 transition-all duration-300 flex flex-col md:flex-row gap-4 items-center"
+              >
+                <div className="flex-grow">
+                  <Select 
+                    value={language.name} 
+                    onValueChange={(value) => updateLanguage(language.id, { name: value })}
+                  >
+                    <SelectTrigger className="bg-white/10 border-white/20 text-white focus:border-medsume-teal">
+                      <SelectValue placeholder="Select language" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-slate-800 border-white/10 text-white max-h-60">
+                      {languageOptions.map(lang => (
+                        <SelectItem key={lang} value={lang} className="focus:bg-medsume-teal/20 focus:text-white">
+                          {lang}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="flex-grow">
+                  <Select 
+                    value={language.proficiency} 
+                    onValueChange={(value) => updateLanguage(language.id, { proficiency: value as any })}
+                  >
+                    <SelectTrigger className="bg-white/10 border-white/20 text-white focus:border-medsume-teal">
+                      <SelectValue placeholder="Proficiency" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-slate-800 border-white/10 text-white">
+                      {proficiencyOptions.map(prof => (
+                        <SelectItem key={prof} value={prof} className="focus:bg-medsume-teal/20 focus:text-white">
+                          {prof}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => removeLanguage(language.id)}
+                  className="text-red-400 hover:text-red-300 hover:bg-red-500/10 h-8 w-8 p-0 flex-shrink-0"
                 >
-                  <X className="h-3 w-3" />
+                  <X size={16} />
                 </Button>
               </div>
             ))}
           </div>
-
-          <div className="flex gap-2 mb-4">
-            <Input
-              value={newHobby}
-              onChange={(e) => setNewHobby(e.target.value)}
-              placeholder="Add a hobby or interest"
-              className="flex-1"
+          
+          {resumeData.languages.length === 0 && (
+            <div className="text-center p-6 border border-dashed border-white/20 rounded-lg bg-white/5">
+              <Languages size={32} className="mx-auto text-white/40 mb-2" />
+              <p className="text-white/60">No languages added yet</p>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={addNewLanguage}
+                className="mt-2 border-medsume-teal text-medsume-teal hover:bg-medsume-teal/10"
+              >
+                <Plus size={16} className="mr-1" /> Add Language
+              </Button>
+            </div>
+          )}
+          
+          <div className="mt-4 flex items-center gap-2">
+            <Input 
+              value={customLanguage}
+              onChange={(e) => setCustomLanguage(e.target.value)}
+              className="bg-white/10 border-white/20 text-white focus:border-medsume-teal"
+              placeholder="Add a custom language"
               onKeyDown={(e) => {
-                if (e.key === 'Enter') {
+                if (e.key === 'Enter' && customLanguage) {
                   e.preventDefault();
-                  handleAddHobby();
+                  handleAddCustomLanguage();
                 }
               }}
             />
-            <Button onClick={handleAddHobby} disabled={!newHobby.trim()}>
+            <Button 
+              type="button" 
+              onClick={handleAddCustomLanguage}
+              className="bg-gradient-to-r from-medsume-appleBlue to-medsume-teal text-white hover:opacity-90"
+              disabled={!customLanguage}
+            >
               Add
             </Button>
           </div>
@@ -1946,20 +728,697 @@ export const ResumeForm: React.FC = () => {
       </AccordionItem>
     );
   };
-
+  
   return (
-    <div className="w-full max-w-4xl mx-auto p-4">
-      <Accordion type="multiple" defaultValue={['personal-details']} className="w-full">
-        {renderPersonalDetailsSection()}
-        {renderMedicalEducationSection()}
-        {renderOtherEducationSection()}
-        {renderExperienceSection()}
-        {renderAwardsSection()}
-        {renderPublicationsSection()}
-        {renderMembershipsSection()}
+    <div className="bg-white/5 backdrop-blur-lg p-6 rounded-xl shadow-inner overflow-y-auto max-h-[800px] border border-white/10">
+      <Accordion type="single" collapsible defaultValue="personal" className="space-y-4">
+        <AccordionItem value="personal" className="border border-white/10 rounded-xl overflow-hidden bg-white/5 backdrop-blur-sm">
+          <AccordionTrigger className="hover:bg-white/5 px-4 py-3 rounded-t-xl">
+            <div className="flex items-center">
+              <div className="p-2 rounded-full bg-gradient-to-r from-medsume-appleBlue to-medsume-teal mr-3">
+                <User size={18} className="text-white" />
+              </div>
+              <span className="text-white font-medium">Personal Details</span>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent className="px-4 pb-6">
+            <div className="space-y-6">
+              <div className="flex justify-center mb-6">
+                <div className="relative">
+                  <div className="w-36 h-36 rounded-xl overflow-hidden border-2 border-white/20 bg-gradient-to-br from-white/5 to-black/10 flex items-center justify-center shadow-inner">
+                    {resumeData.personalDetails.photoUrl ? (
+                      <img 
+                        src={resumeData.personalDetails.photoUrl} 
+                        alt="Profile" 
+                        className="w-full h-full object-contain"
+                      />
+                    ) : (
+                      <User size={48} className="text-white/40" />
+                    )}
+                  </div>
+                  <label 
+                    htmlFor="photo-upload" 
+                    className="absolute bottom-0 right-0 bg-gradient-to-r from-medsume-appleBlue to-medsume-teal text-white p-2 rounded-full cursor-pointer shadow-lg hover:scale-105 transition-transform duration-200"
+                  >
+                    <Plus size={16} />
+                  </label>
+                  <input 
+                    id="photo-upload" 
+                    type="file" 
+                    accept="image/*" 
+                    className="hidden" 
+                    onChange={handlePhotoUpload}
+                  />
+                  <p className="text-xs text-white/60 text-center mt-2">Upload a professional headshot</p>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-white">First Name*</label>
+                  <Input 
+                    value={resumeData.personalDetails.firstName}
+                    onChange={(e) => updatePersonalDetails({ firstName: e.target.value })}
+                    className="bg-white/10 border-white/20 text-white focus:border-medsume-teal"
+                    placeholder="First name"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-white">Middle Name</label>
+                  <Input 
+                    value={resumeData.personalDetails.middleName}
+                    onChange={(e) => updatePersonalDetails({ middleName: e.target.value })}
+                    className="bg-white/10 border-white/20 text-white focus:border-medsume-teal"
+                    placeholder="Middle name"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-white">Last Name*</label>
+                  <Input 
+                    value={resumeData.personalDetails.lastName}
+                    onChange={(e) => updatePersonalDetails({ lastName: e.target.value })}
+                    className="bg-white/10 border-white/20 text-white focus:border-medsume-teal"
+                    placeholder="Last name"
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-2 text-white">Organization</label>
+                <Input 
+                  value={resumeData.personalDetails.organization}
+                  onChange={(e) => updatePersonalDetails({ organization: e.target.value })}
+                  className="bg-white/10 border-white/20 text-white focus:border-medsume-teal"
+                  placeholder="e.g., Mayo Clinic"
+                />
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-white">ID Type</label>
+                  <Select 
+                    value={resumeData.personalDetails.idType} 
+                    onValueChange={(value) => updatePersonalDetails({ idType: value })}
+                  >
+                    <SelectTrigger className="bg-white/10 border-white/20 text-white focus:border-medsume-teal">
+                      <SelectValue placeholder="Select ID type" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-slate-800 border-white/10 text-white max-h-60">
+                      {extendedIdTypeOptions.map(type => (
+                        <SelectItem key={type} value={type} className="focus:bg-medsume-teal/20 focus:text-white">
+                          {type}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-white">ID Number</label>
+                  <Input 
+                    value={resumeData.personalDetails.idNumber}
+                    onChange={(e) => updatePersonalDetails({ idNumber: e.target.value })}
+                    className="bg-white/10 border-white/20 text-white focus:border-medsume-teal"
+                    placeholder="Your ID number"
+                    maxLength={20}
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-2 text-white">Mailing Address</label>
+                <Textarea 
+                  value={resumeData.personalDetails.mailingAddress}
+                  onChange={(e) => updatePersonalDetails({ mailingAddress: e.target.value })}
+                  className="bg-white/10 border-white/20 text-white focus:border-medsume-teal"
+                  placeholder="Your complete address"
+                  rows={3}
+                />
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-white">Phone (with country code)</label>
+                  <Input 
+                    value={resumeData.personalDetails.phoneNumber}
+                    onChange={(e) => updatePersonalDetails({ phoneNumber: e.target.value })}
+                    className="bg-white/10 border-white/20 text-white focus:border-medsume-teal"
+                    placeholder="e.g. +1 234 567 8900"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-white">Email</label>
+                  <Input 
+                    type="email"
+                    value={resumeData.personalDetails.email}
+                    onChange={(e) => updatePersonalDetails({ email: e.target.value })}
+                    className="bg-white/10 border-white/20 text-white focus:border-medsume-teal"
+                    placeholder="Your email address"
+                  />
+                </div>
+              </div>
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+        
+        {renderEducationSection()}
+        
+        <AccordionItem value="experience" className="border border-white/10 rounded-xl overflow-hidden bg-white/5 backdrop-blur-sm">
+          <AccordionTrigger className="hover:bg-white/5 px-4 py-3 rounded-t-xl">
+            <div className="flex items-center">
+              <div className="p-2 rounded-full bg-gradient-to-r from-medsume-appleBlue to-medsume-teal mr-3">
+                <Briefcase size={18} className="text-white" />
+              </div>
+              <span className="text-white font-medium">Experience</span>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent className="px-4 pb-6">
+            <div className="flex justify-between items-center mb-4">
+              <label className="block text-sm font-medium text-white/80">Add your professional experience</label>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={addNewExperience}
+                className="border-medsume-teal text-medsume-teal hover:bg-medsume-teal/10"
+              >
+                <Plus size={16} className="mr-1" /> Add
+              </Button>
+            </div>
+            
+            <div className="space-y-8">
+              {resumeData.experiences.map((exp, index) => (
+                <div 
+                  key={exp.id} 
+                  className="p-4 border border-white/10 rounded-lg bg-white/5 hover:bg-white/10 transition-all duration-300"
+                >
+                  <div className="flex justify-between mb-4">
+                    <h4 className="text-white font-medium">Experience {index + 1}</h4>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => removeExperience(exp.id)}
+                      className="text-red-400 hover:text-red-300 hover:bg-red-500/10 h-8 w-8 p-0"
+                    >
+                      <X size={16} />
+                    </Button>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-white/80">Role/Position</label>
+                      <Input 
+                        value={exp.role}
+                        onChange={(e) => updateExperience(exp.id, { role: e.target.value })}
+                        className="bg-white/10 border-white/20 text-white focus:border-medsume-teal"
+                        placeholder="e.g., Resident Physician"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-white/80">Department</label>
+                      <Input 
+                        value={exp.department}
+                        onChange={(e) => updateExperience(exp.id, { department: e.target.value })}
+                        className="bg-white/10 border-white/20 text-white focus:border-medsume-teal"
+                        placeholder="e.g., Internal Medicine"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-white/80">Institution</label>
+                      <Input 
+                        value={exp.institution}
+                        onChange={(e) => updateExperience(exp.id, { institution: e.target.value })}
+                        className="bg-white/10 border-white/20 text-white focus:border-medsume-teal"
+                        placeholder="e.g., Mayo Clinic"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-white/80">Type</label>
+                      <Select 
+                        value={exp.type} 
+                        onValueChange={(value) => updateExperience(exp.id, { type: value })}
+                      >
+                        <SelectTrigger className="bg-white/10 border-white/20 text-white focus:border-medsume-teal">
+                          <SelectValue placeholder="Select type" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-slate-800 border-white/10 text-white">
+                          {jobTypeOptions.map(type => (
+                            <SelectItem key={type} value={type} className="focus:bg-medsume-teal/20 focus:text-white">
+                              {type}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-white/80">Start Date</label>
+                      <div className="relative">
+                        <Input 
+                          type="date"
+                          value={exp.startDate}
+                          onChange={(e) => handleDateChange('experience', exp.id, 'startDate', e.target.value)}
+                          className="bg-white/10 border-white/20 text-white focus:border-medsume-teal pl-10"
+                        />
+                        <Calendar size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60" />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-white/80">End Date</label>
+                      <div className="relative">
+                        <Input 
+                          type="date"
+                          value={exp.endDate}
+                          onChange={(e) => handleDateChange('experience', exp.id, 'endDate', e.target.value)}
+                          className="bg-white/10 border-white/20 text-white focus:border-medsume-teal pl-10"
+                        />
+                        <Calendar size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60" />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium mb-2 text-white/80">Description</label>
+                    <Textarea 
+                      value={exp.description}
+                      onChange={(e) => updateExperience(exp.id, { description: e.target.value })}
+                      className="bg-white/10 border-white/20 text-white focus:border-medsume-teal"
+                      placeholder="Describe your responsibilities and achievements"
+                      rows={3}
+                    />
+                  </div>
+                </div>
+              ))}
+              
+              {resumeData.experiences.length === 0 && (
+                <div className="text-center p-6 border border-dashed border-white/20 rounded-lg bg-white/5">
+                  <Briefcase size={32} className="mx-auto text-white/40 mb-2" />
+                  <p className="text-white/60">No experience added yet</p>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={addNewExperience}
+                    className="mt-2 border-medsume-teal text-medsume-teal hover:bg-medsume-teal/10"
+                  >
+                    <Plus size={16} className="mr-1" /> Add Experience
+                  </Button>
+                </div>
+              )}
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+        
+        <AccordionItem value="awards" className="border border-white/10 rounded-xl overflow-hidden bg-white/5 backdrop-blur-sm">
+          <AccordionTrigger className="hover:bg-white/5 px-4 py-3 rounded-t-xl">
+            <div className="flex items-center">
+              <div className="p-2 rounded-full bg-gradient-to-r from-medsume-appleBlue to-medsume-teal mr-3">
+                <Award size={18} className="text-white" />
+              </div>
+              <span className="text-white font-medium">Honors & Awards</span>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent className="px-4 pb-6">
+            <div className="flex justify-between items-center mb-4">
+              <label className="block text-sm font-medium text-white/80">Add your honors and awards</label>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={addNewAward}
+                className="border-medsume-teal text-medsume-teal hover:bg-medsume-teal/10"
+              >
+                <Plus size={16} className="mr-1" /> Add
+              </Button>
+            </div>
+            
+            <div className="space-y-8">
+              {resumeData.awards.map((award, index) => (
+                <div 
+                  key={award.id} 
+                  className="p-4 border border-white/10 rounded-lg bg-white/5 hover:bg-white/10 transition-all duration-300"
+                >
+                  <div className="flex justify-between mb-4">
+                    <h4 className="text-white font-medium">Award {index + 1}</h4>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => removeAward(award.id)}
+                      className="text-red-400 hover:text-red-300 hover:bg-red-500/10 h-8 w-8 p-0"
+                    >
+                      <X size={16} />
+                    </Button>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-white/80">Title</label>
+                      <Input 
+                        value={award.title}
+                        onChange={(e) => updateAward(award.id, { title: e.target.value })}
+                        className="bg-white/10 border-white/20 text-white focus:border-medsume-teal"
+                        placeholder="e.g., Excellence in Research"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-white/80">Organization</label>
+                      <Input 
+                        value={award.organization}
+                        onChange={(e) => updateAward(award.id, { organization: e.target.value })}
+                        className="bg-white/10 border-white/20 text-white focus:border-medsume-teal"
+                        placeholder="e.g., American Medical Association"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium mb-2 text-white/80">Date</label>
+                    <div className="relative">
+                      <Input 
+                        type="date"
+                        value={award.date}
+                        onChange={(e) => handleDateChange('award', award.id, 'date', e.target.value)}
+                        className="bg-white/10 border-white/20 text-white focus:border-medsume-teal pl-10"
+                      />
+                      <Calendar size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60" />
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium mb-2 text-white/80">Description</label>
+                    <Textarea 
+                      value={award.description}
+                      onChange={(e) => updateAward(award.id, { description: e.target.value })}
+                      className="bg-white/10 border-white/20 text-white focus:border-medsume-teal"
+                      placeholder="Brief description of the award"
+                      rows={3}
+                    />
+                  </div>
+                </div>
+              ))}
+              
+              {resumeData.awards.length === 0 && (
+                <div className="text-center p-6 border border-dashed border-white/20 rounded-lg bg-white/5">
+                  <Award size={32} className="mx-auto text-white/40 mb-2" />
+                  <p className="text-white/60">No awards added yet</p>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={addNewAward}
+                    className="mt-2 border-medsume-teal text-medsume-teal hover:bg-medsume-teal/10"
+                  >
+                    <Plus size={16} className="mr-1" /> Add Award
+                  </Button>
+                </div>
+              )}
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+        
+        <AccordionItem value="publications" className="border border-white/10 rounded-xl overflow-hidden bg-white/5 backdrop-blur-sm">
+          <AccordionTrigger className="hover:bg-white/5 px-4 py-3 rounded-t-xl">
+            <div className="flex items-center">
+              <div className="p-2 rounded-full bg-gradient-to-r from-medsume-appleBlue to-medsume-teal mr-3">
+                <FileText size={18} className="text-white" />
+              </div>
+              <span className="text-white font-medium">Publications</span>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent className="px-4 pb-6">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="detailed-publications"
+                    checked={detailedPublications}
+                    onCheckedChange={(checked) => setDetailedPublications(checked as boolean)}
+                    className="border-white/20 data-[state=checked]:bg-medsume-teal data-[state=checked]:border-medsume-teal"
+                  />
+                  <label 
+                    htmlFor="detailed-publications"
+                    className="text-sm text-white leading-none cursor-pointer"
+                  >
+                    Detailed Publications
+                  </label>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="text-publications"
+                    checked={!detailedPublications}
+                    onCheckedChange={(checked) => setDetailedPublications(!(checked as boolean))}
+                    className="border-white/20 data-[state=checked]:bg-medsume-teal data-[state=checked]:border-medsume-teal"
+                  />
+                  <label 
+                    htmlFor="text-publications"
+                    className="text-sm text-white leading-none cursor-pointer"
+                  >
+                    Text Format
+                  </label>
+                </div>
+              </div>
+              
+              {detailedPublications && (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={addNewPublication}
+                  className="border-medsume-teal text-medsume-teal hover:bg-medsume-teal/10"
+                >
+                  <Plus size={16} className="mr-1" /> Add
+                </Button>
+              )}
+            </div>
+            
+            {detailedPublications ? (
+              <div className="space-y-8">
+                {resumeData.publications.map((pub, index) => (
+                  <div 
+                    key={pub.id} 
+                    className="p-4 border border-white/10 rounded-lg bg-white/5 hover:bg-white/10 transition-all duration-300"
+                  >
+                    <div className="flex justify-between mb-4">
+                      <h4 className="text-white font-medium">Publication {index + 1}</h4>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => removePublication(pub.id)}
+                        className="text-red-400 hover:text-red-300 hover:bg-red-500/10 h-8 w-8 p-0"
+                      >
+                        <X size={16} />
+                      </Button>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-2 text-white/80">Title</label>
+                        <Input 
+                          value={pub.title}
+                          onChange={(e) => updatePublication(pub.id, { title: e.target.value })}
+                          className="bg-white/10 border-white/20 text-white focus:border-medsume-teal"
+                          placeholder="Publication title"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium mb-2 text-white/80">Authors</label>
+                        <Input 
+                          value={pub.authors}
+                          onChange={(e) => updatePublication(pub.id, { authors: e.target.value })}
+                          className="bg-white/10 border-white/20 text-white focus:border-medsume-teal"
+                          placeholder="e.g., Smith J, Jones A, et al."
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium mb-2 text-white/80">Journal</label>
+                        <Input 
+                          value={pub.journal}
+                          onChange={(e) => updatePublication(pub.id, { journal: e.target.value })}
+                          className="bg-white/10 border-white/20 text-white focus:border-medsume-teal"
+                          placeholder="e.g., Journal of Medical Research"
+                        />
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium mb-2 text-white/80">Date</label>
+                          <div className="relative">
+                            <Input 
+                              type="date"
+                              value={pub.date}
+                              onChange={(e) => handleDateChange('publication', pub.id, 'date', e.target.value)}
+                              className="bg-white/10 border-white/20 text-white focus:border-medsume-teal pl-10"
+                            />
+                            <Calendar size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60" />
+                          </div>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium mb-2 text-white/80">DOI</label>
+                          <Input 
+                            value={pub.doi}
+                            onChange={(e) => updatePublication(pub.id, { doi: e.target.value })}
+                            className="bg-white/10 border-white/20 text-white focus:border-medsume-teal"
+                            placeholder="e.g., 10.1000/xyz123"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                
+                {resumeData.publications.length === 0 && (
+                  <div className="text-center p-6 border border-dashed border-white/20 rounded-lg bg-white/5">
+                    <FileText size={32} className="mx-auto text-white/40 mb-2" />
+                    <p className="text-white/60">No publications added yet</p>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={addNewPublication}
+                      className="mt-2 border-medsume-teal text-medsume-teal hover:bg-medsume-teal/10"
+                    >
+                      <Plus size={16} className="mr-1" /> Add Publication
+                    </Button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div>
+                <label className="block text-sm font-medium mb-2 text-white/80">Publications (in text format)</label>
+                <Textarea 
+                  value={resumeData.publicationsText}
+                  onChange={(e) => updatePublicationsText(e.target.value)}
+                  className="bg-white/10 border-white/20 text-white focus:border-medsume-teal min-h-[200px]"
+                  placeholder="Enter your publications in your preferred format. Each publication will be displayed as entered."
+                  rows={8}
+                />
+                <p className="text-xs text-white/60 mt-2">
+                  Tip: Enter each publication on a new line. You can use standard citation formats.
+                </p>
+              </div>
+            )}
+          </AccordionContent>
+        </AccordionItem>
+        
+        <AccordionItem value="memberships" className="border border-white/10 rounded-xl overflow-hidden bg-white/5 backdrop-blur-sm">
+          <AccordionTrigger className="hover:bg-white/5 px-4 py-3 rounded-t-xl">
+            <div className="flex items-center">
+              <div className="p-2 rounded-full bg-gradient-to-r from-medsume-appleBlue to-medsume-teal mr-3">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-[18px] w-[18px] text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
+                </svg>
+              </div>
+              <span className="text-white font-medium">Professional Memberships & Certifications</span>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent className="px-4 pb-6">
+            <div className="flex justify-between items-center mb-4">
+              <label className="block text-sm font-medium text-white/80">Add your professional memberships and certifications</label>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={addNewMembership}
+                className="border-medsume-teal text-medsume-teal hover:bg-medsume-teal/10"
+              >
+                <Plus size={16} className="mr-1" /> Add
+              </Button>
+            </div>
+            
+            <div className="space-y-8">
+              {resumeData.memberships.map((membership, index) => (
+                <div 
+                  key={membership.id} 
+                  className="p-4 border border-white/10 rounded-lg bg-white/5 hover:bg-white/10 transition-all duration-300"
+                >
+                  <div className="flex justify-between mb-4">
+                    <h4 className="text-white font-medium">Membership/Certification {index + 1}</h4>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => removeMembership(membership.id)}
+                      className="text-red-400 hover:text-red-300 hover:bg-red-500/10 h-8 w-8 p-0"
+                    >
+                      <X size={16} />
+                    </Button>
+                  </div>
+                  
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium mb-2 text-white/80">Name</label>
+                    <Input 
+                      value={membership.name}
+                      onChange={(e) => updateMembership(membership.id, { name: e.target.value })}
+                      className="bg-white/10 border-white/20 text-white focus:border-medsume-teal"
+                      placeholder="e.g., American Medical Association"
+                    />
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-white/80">Issue Date</label>
+                      <div className="relative">
+                        <Input 
+                          type="date"
+                          value={membership.issueDate}
+                          onChange={(e) => handleDateChange('membership', membership.id, 'issueDate', e.target.value)}
+                          className="bg-white/10 border-white/20 text-white focus:border-medsume-teal pl-10"
+                        />
+                        <Calendar size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60" />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-white/80">Expiry Date</label>
+                      <div className="relative">
+                        <Input 
+                          type="date"
+                          value={membership.expiryDate}
+                          onChange={(e) => handleDateChange('membership', membership.id, 'expiryDate', e.target.value)}
+                          className="bg-white/10 border-white/20 text-white focus:border-medsume-teal pl-10"
+                        />
+                        <Calendar size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60" />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium mb-2 text-white/80">Remarks</label>
+                    <Textarea 
+                      value={membership.remarks}
+                      onChange={(e) => updateMembership(membership.id, { remarks: e.target.value })}
+                      className="bg-white/10 border-white/20 text-white focus:border-medsume-teal"
+                      placeholder="Additional information"
+                      rows={3}
+                    />
+                  </div>
+                </div>
+              ))}
+              
+              {resumeData.memberships.length === 0 && (
+                <div className="text-center p-6 border border-dashed border-white/20 rounded-lg bg-white/5">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 mx-auto text-white/40 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
+                  </svg>
+                  <p className="text-white/60">No memberships or certifications added yet</p>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={addNewMembership}
+                    className="mt-2 border-medsume-teal text-medsume-teal hover:bg-medsume-teal/10"
+                  >
+                    <Plus size={16} className="mr-1" /> Add Membership
+                  </Button>
+                </div>
+              )}
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+        
         {renderLanguagesSection()}
+        
         {renderHobbiesSection()}
       </Accordion>
     </div>
   );
 };
+
+export default ResumeForm;

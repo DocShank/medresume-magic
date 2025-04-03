@@ -7,7 +7,6 @@ export type Education = {
   institution: string;
   location: string;
   degree: string;
-  degreeOther?: string;
   startDate: string;
   endDate: string;
   graduationYear: string;
@@ -23,7 +22,6 @@ export type Experience = {
   startDate: string;
   endDate: string;
   type: string;
-  typeOther?: string;
   description: string;
 };
 
@@ -65,7 +63,6 @@ export type PersonalDetails = {
   lastName: string;
   organization?: string;
   idType?: string;
-  idTypeOther?: string;
   idNumber?: string;
   hasAccreditedId: boolean;
   accreditedOrg?: string;
@@ -156,6 +153,7 @@ export const ResumeProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
   const generateId = () => Math.random().toString(36).substr(2, 9);
 
+  // Medical Education
   const addMedicalEducation = (education: Education) => {
     const newEducation = { ...education, id: education.id || generateId() };
     setResumeData(prev => ({
@@ -180,6 +178,7 @@ export const ResumeProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     }));
   };
 
+  // Other Education
   const addOtherEducation = (education: Education) => {
     const newEducation = { ...education, id: education.id || generateId() };
     setResumeData(prev => ({
@@ -204,6 +203,7 @@ export const ResumeProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     }));
   };
 
+  // Experience
   const addExperience = (experience: Experience) => {
     const newExperience = { ...experience, id: experience.id || generateId() };
     setResumeData(prev => ({
@@ -228,6 +228,7 @@ export const ResumeProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     }));
   };
 
+  // Awards
   const addAward = (award: Award) => {
     const newAward = { ...award, id: award.id || generateId() };
     setResumeData(prev => ({
@@ -252,6 +253,7 @@ export const ResumeProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     }));
   };
 
+  // Publications
   const addPublication = (publication: Publication) => {
     const newPublication = { ...publication, id: publication.id || generateId() };
     setResumeData(prev => ({
@@ -283,6 +285,7 @@ export const ResumeProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     }));
   };
 
+  // Memberships
   const addMembership = (membership: Membership) => {
     const newMembership = { ...membership, id: membership.id || generateId() };
     setResumeData(prev => ({
@@ -307,6 +310,7 @@ export const ResumeProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     }));
   };
 
+  // Languages
   const addLanguage = (language: Language) => {
     const newLanguage = { ...language, id: language.id || generateId() };
     setResumeData(prev => ({
@@ -331,6 +335,7 @@ export const ResumeProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     }));
   };
 
+  // Hobbies
   const updateHobbies = (hobbies: string[]) => {
     setResumeData(prev => ({
       ...prev,
