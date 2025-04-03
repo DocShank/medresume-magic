@@ -63,6 +63,7 @@ export type PersonalDetails = {
   lastName: string;
   organization?: string;
   idType?: string;
+  idTypeOther?: string;
   idNumber?: string;
   hasAccreditedId: boolean;
   accreditedOrg?: string;
@@ -123,6 +124,8 @@ const defaultResumeData: ResumeData = {
     lastName: '',
     hasAccreditedId: false,
     linkedinUrl: '',
+    idType: '',
+    idTypeOther: '',
   },
   medicalEducation: [],
   otherEducation: [],

@@ -23,15 +23,11 @@ const ResumeBuilder = () => {
                 Premium Resume Builder for Medical Professionals
               </div>
             </div>
-            
-            {/* User guidance animation */}
-            <div className="flex flex-col items-center mt-6 mb-12 text-white/70 animate-pulse">
-              <p className="mb-2">Swipe down to start creating your professional resume</p>
-              <ChevronDown className="h-6 w-6 animate-bounce" />
-            </div>
           </header>
           
-          <TemplateSelector />
+          <div id="templates">
+            <TemplateSelector />
+          </div>
           
           <Tabs value={currentTab} onValueChange={setCurrentTab} className="mt-10">
             <TabsList className="w-full flex justify-center mb-8 bg-white/5 backdrop-blur-lg p-1 rounded-full border border-white/10 shadow-inner">
