@@ -4,7 +4,7 @@ import React from 'react';
 const teamMembers = [
   {
     name: "Shashank Neupane, MBBS",
-    designation: "Director",
+    designation: "Creator & Lead Developer",
     image: "/lovable-uploads/3f161cb9-78bb-4954-b747-6004ff80385b.png"
   },
   {

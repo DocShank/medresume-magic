@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 export type Template = 'professional' | 'executive';
@@ -58,6 +59,7 @@ export type Language = {
 };
 
 export type PersonalDetails = {
+  photoUrl?: string;
   firstName: string;
   middleName?: string;
   lastName: string;
@@ -71,7 +73,7 @@ export type PersonalDetails = {
   countryCode?: string;
   phoneNumber?: string;
   email?: string;
-  linkedinUrl?: string;
+  socialMediaUrl?: string;
 };
 
 export type ResumeData = {
@@ -122,7 +124,7 @@ const defaultResumeData: ResumeData = {
     firstName: '',
     lastName: '',
     hasAccreditedId: false,
-    linkedinUrl: '',
+    socialMediaUrl: '',
   },
   medicalEducation: [],
   otherEducation: [],

@@ -15,13 +15,6 @@ const IntroPage = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleScrollToTemplates = () => {
-    const templateSection = document.getElementById('templates');
-    if (templateSection) {
-      templateSection.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-white p-4 md:p-8 relative overflow-hidden">
       {/* Apple-style gradient blurred circles in background */}
@@ -37,18 +30,18 @@ const IntroPage = () => {
           Welcome to the Medical Professional Community
         </h1>
         <p className="text-lg md:text-xl font-opensans text-medsume-textDark leading-relaxed mb-6">
-          Create stunning, professional resumes tailored for medical practitioners.
+          Create stunning, professional resumes tailored for medical practitioners. Our specialized tool helps you showcase your credentials with precision and elegance.
         </p>
         
-        {/* Navigation guidance with click functionality */}
-        <div 
-          className="flex flex-col items-center mt-6 animate-bounce cursor-pointer" 
-          style={{animationDuration: '2s'}}
-          onClick={handleScrollToTemplates}
-        >
+        {/* Added navigation guidance */}
+        <div className="flex flex-col items-center mt-6 animate-bounce" style={{animationDuration: '2s'}}>
           <p className="text-medsume-textDark mb-2">Swipe down to start creating</p>
           <ArrowDown size={24} className="text-medsume-appleBlue" />
         </div>
+      </div>
+      
+      <div className="mt-12 w-full z-10">
+        <FoundingTeam />
       </div>
       
       <div className="mt-auto pt-6 text-xs text-medsume-watermark opacity-70">
